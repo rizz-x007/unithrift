@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniThrift | Marketplace</title>
+
+    <link rel="stylesheet" href="css/marketplace.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<script src="/js/auth-callback.js"></script>
+
+<body class="dark-theme">
+
+    <nav class="navbar">
+
+        <div class="logo">
+            UniThrift
+        </div>
+
+        <div class="search-container">
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search books, electronics, hostel items...">
+
+            <button id="searchBtn">
+                <i class="fas fa-search"></i>
+            </button>
+
+        </div>
+
+        <div class="nav-actions">
+
+            <button
+                class="icon-btn"
+                id="themeToggle">
+
+                <i class="fas fa-moon"></i>
+
+            </button>
+
+            <button
+                class="icon-btn"
+                id="cartBtn"
+                style="position: relative;">
+
+                <i class="fas fa-cart-shopping"></i>
+                <span id="cartBadge">0</span>
+
+            </button>
+
+            <button
+                class="icon-btn"
+                id="profileBtn">
+
+                <i class="fas fa-user"></i>
+
+            </button>
+
+        </div>
+
+    </nav>
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <h1>
+                Buy & Sell Student Essentials
+            </h1>
+
+            <p>
+                Books, Lab Equipment, Electronics,
+                Hostel Items and much more.
+            </p>
+
+            <button
+                id="sellBtn"
+                class="sell-btn">
+
+                Sell an Item
+
+            </button>
+
+        </div>
+
+    </section>
+
+    <section class="marketplace-layout">
+
+        <aside class="sidebar">
+
+            <div class="sidebar-header">
+
+                <h2>
+                    Filters
+                </h2>
+
+            </div>
+
+            <div class="filter-group">
+
+                <label>
+                    Category
+                </label>
+
+                <select id="categoryFilter">
+
+                    <option value="">
+                        All Categories
+                    </option>
+
+                    <option value="Books">
+                        Books
+                    </option>
+
+                    <option value="Electronics">
+                        Electronics
+                    </option>
+
+                    <option value="Lab Equipment">
+                        Lab Equipment
+                    </option>
+
+                    <option value="Notes">
+                        Notes
+                    </option>
+
+                    <option value="Hostel Items">
+                        Hostel Items
+                    </option>
+
+                    <option value="Uniforms">
+                        Uniforms
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="filter-group">
+
+                <label>
+                    Condition
+                </label>
+
+                <select id="conditionFilter">
+
+                    <option value="">
+                        All Conditions
+                    </option>
+
+                    <option value="Like New">
+                        Like New
+                    </option>
+
+                    <option value="Excellent">
+                        Excellent
+                    </option>
+
+                    <option value="Good">
+                        Good
+                    </option>
+
+                    <option value="Fair">
+                        Fair
+                    </option>
+
+                </select>
+
+            </div>
+
+            <button
+                id="applyFilters"
+                class="filter-btn">
+
+                Apply Filters
+
+            </button>
+
+        </aside>
+
+        <div class="products-area">
+
+            <div class="section-title">
+
+                <h2>
+                    Latest Listings
+                </h2>
+
+                <p>
+                    Discover products from students near you
+                </p>
+
+            </div>
+
+            <div
+                id="productsContainer"
+                class="products-grid">
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <div
+        id="cartModal"
+        class="cart-modal">
+
+        <div class="cart-content">
+
+            <div class="cart-header">
+
+                <h2>
+                    Your Cart
+                </h2>
+
+                <button
+                    id="closeCart"
+                    class="close-btn">
+
+                    <i class="fas fa-times"></i>
+
+                </button>
+
+            </div>
+
+            <div id="cartItems">
+
+                <div class="empty-cart">
+                    Empty Cart
+                </div>
+
+            </div>
+
+            <div id="cartFooter">
+                <button id="placeOrderBtn">Place Order</button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <section class="support-section">
+
+        <div class="support-card">
+
+            <h2>
+                Customer Support
+            </h2>
+
+            <p>
+                Need help with listings, purchases,
+                verification or account issues?
+            </p>
+
+            <div class="support-info">
+
+                <div class="support-item">
+
+                    <i class="fas fa-phone"></i>
+
+                    <span>
+                        +91 96749 69118
+                    </span>
+
+                </div>
+
+                <div class="support-item">
+
+                    <i class="fas fa-envelope"></i>
+
+                    <span>
+                        rizzmax.hacks@gmail.com
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <footer>
+
+        <div class="footer-content">
+
+            <div>
+
+                <h3>
+                    UniThrift
+                </h3>
+
+                <p>
+                    India's Student Marketplace
+                </p>
+
+            </div>
+
+            <div>
+
+                <p>
+                    © 2026 UniThrift
+                </p>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+    <div
+        id="loadingOverlay"
+        class="loading-overlay">
+
+        <div class="loader"></div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+
+    <script src="/js/marketplace.js"></script>
+
+</body>
+</html>

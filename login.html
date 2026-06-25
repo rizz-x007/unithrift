@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniThrift | Login</title>
+    <!-- FIX: use absolute path so Express static middleware always resolves it -->
+    <link rel="stylesheet" href="/css/login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- LEFT PANEL -->
+        <div class="left-panel">
+            <div class="overlay"></div>
+            <div class="hero-content">
+                <h1 class="logo">UniThrift</h1>
+                <h2 class="typing-text">
+                    <span id="animated-text"></span>
+                </h2>
+                <ul>
+                    <li>📚 Buy Used Academic Essentials</li>
+                    <li>💰 Sell Unused College Items</li>
+                    <li>🏫 Verified Student Community</li>
+                    <li>♻ Sustainable Student Economy</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL -->
+        <div class="right-panel">
+            <div class="form-box">
+                <h2 id="formTitle">Welcome Back</h2>
+
+                <!-- LOGIN FORM — all inputs now have IDs so JS can read them -->
+                <form id="loginForm">
+                    <div class="input-group">
+                        <input type="text" id="loginIdentifier" placeholder="Username or Email Address" required autocomplete="username">
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="loginPassword" placeholder="Password" required autocomplete="current-password">
+                        <button type="button" class="toggle-pw" id="toggleLoginPw" tabindex="-1">👁</button>
+                    </div>
+                    <p id="loginError" class="form-error" style="display:none;"></p>
+                    <button type="submit" class="submit-btn" id="loginSubmitBtn">Login</button>
+                </form>
+
+                <!-- SIGNUP FORM — all inputs now have IDs -->
+                <form id="signupForm" style="display:none;">
+                    <div class="input-group">
+                        <input type="text" id="signupUsername" placeholder="Username" required autocomplete="username">
+                    </div>
+                    <div class="input-group">
+                        <input type="email" id="signupEmail" placeholder="Email Address" required autocomplete="email">
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="signupPassword" placeholder="Password" required autocomplete="new-password">
+                        <button type="button" class="toggle-pw" id="toggleSignupPw" tabindex="-1">👁</button>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="signupConfirm" placeholder="Confirm Password" required autocomplete="new-password">
+                    </div>
+                    <p id="signupError" class="form-error" style="display:none;"></p>
+                    <button type="submit" class="submit-btn" id="signupSubmitBtn">Create Account</button>
+                </form>
+
+                <!-- Status message shown after actions -->
+                <p id="statusMsg" style="display:none; text-align:center; margin-top:10px; font-size:0.85rem;"></p>
+
+                <div class="divider">OR</div>
+
+                <button type="button" id="googleLoginBtn" class="google-btn">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="" style="width:18px; vertical-align:middle; margin-right:8px;">
+                    Continue with Google
+                </button>
+
+                <p class="toggle-text">
+                    <span id="toggleText">Don't have an account?</span>
+                    <a href="#" id="toggleBtn">Sign Up</a>
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="/js/login.js"></script>
+</body>
+</html>

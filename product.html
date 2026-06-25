@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>UniThrift | Product Details</title>
+
+    <link rel="stylesheet" href="css/product.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+        <div class="logo">
+            UniThrift
+        </div>
+
+        <div class="nav-links">
+
+            <a href="/marketplace">
+                Marketplace
+            </a>
+
+            <a href="/sell">
+                Sell Item
+            </a>
+
+            <a href="/profile">
+                Profile
+            </a>
+
+        </div>
+
+    </nav>
+
+    <main class="product-container">
+
+        <section class="gallery-section">
+
+            <img
+                id="mainImage"
+                class="main-image"
+                src=""
+                alt="Product Image">
+
+            <div
+                id="thumbnailContainer"
+                class="thumbnail-container">
+
+            </div>
+
+        </section>
+
+        <section class="details-section">
+
+            <h1 id="productTitle">
+                Loading...
+            </h1>
+
+            <div
+                id="productPrice"
+                class="price">
+            </div>
+
+            <div
+                id="productCondition"
+                class="condition">
+            </div>
+
+            <div class="info-card">
+
+                <h3>
+                    Product Details
+                </h3>
+
+                <p>
+                    <strong>Delivery:</strong>
+                    <span id="deliveryDate"></span>
+                </p>
+
+                <p>
+                    <strong>Warranty:</strong>
+                    <span id="warranty"></span>
+                </p>
+
+                <p>
+                    <strong>Payment:</strong>
+                    <span id="paymentMethods"></span>
+                </p>
+
+            </div>
+
+            <div class="action-buttons">
+
+                <button id="addCartBtn">
+                    Add To Cart
+                </button>
+
+                <button id="contactSellerBtn">
+                    Contact Seller
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <section class="description-section">
+
+        <h2>
+            Description
+        </h2>
+
+        <div id="productDescription">
+
+        </div>
+
+    </section>
+
+    <section class="seller-section">
+
+        <h2>
+            Seller Information
+        </h2>
+
+        <div id="sellerInfo">
+
+        </div>
+
+    </section>
+
+    <section class="verification-section">
+
+        <h2>
+            AI Product Verification
+        </h2>
+
+        <div id="verificationInfo">
+
+            <p>
+                Verification data will be loaded here.
+            </p>
+
+        </div>
+
+    </section>
+
+    <section class="reviews-section">
+
+        <h2>
+            Reviews
+        </h2>
+
+        <div id="reviewsContainer">
+
+        </div>
+
+    </section>
+
+    <section class="review-form-section">
+
+        <h2>
+            Leave a Review
+        </h2>
+
+        <form id="reviewForm">
+
+            <label>
+                Rating
+            </label>
+
+            <select
+                id="rating"
+                required>
+
+                <option value="">
+                    Select Rating
+                </option>
+
+                <option value="1">
+                    1 Star
+                </option>
+
+                <option value="2">
+                    2 Stars
+                </option>
+
+                <option value="3">
+                    3 Stars
+                </option>
+
+                <option value="4">
+                    4 Stars
+                </option>
+
+                <option value="5">
+                    5 Stars
+                </option>
+
+            </select>
+
+            <label>
+                Review
+            </label>
+
+            <textarea
+                id="reviewText"
+                rows="5"
+                placeholder="Write your review..."
+                required>
+            </textarea>
+
+            <button type="submit">
+                Submit Review
+            </button>
+
+        </form>
+
+    </section>
+
+    <div id="contactModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="modal-close" id="closeModal">&times;</span>
+            <h2>Contact Seller</h2>
+            <hr class="modal-divider">
+            <div id="modalSellerDetails">
+                </div>
+        </div>
+    </div>
+
+    <footer>
+
+        <p>
+            © 2026 UniThrift. All Rights Reserved.
+        </p>
+
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+
+    <script src="/js/product.js"></script>
+
+</body>
+
+</html>
