@@ -27,6 +27,15 @@ const contactModal = document.getElementById("contactModal");
 const closeModal = document.getElementById("closeModal");
 const modalSellerDetails = document.getElementById("modalSellerDetails");
 
+// Chat Popup Elements
+const chatWithSellerBtn = document.getElementById("chatWithSellerBtn");
+const chatPopup = document.getElementById("chatPopup");
+const closeChatBtn = document.getElementById("closeChatBtn");
+const chatForm = document.getElementById("chatForm");
+const chatInput = document.getElementById("chatInput");
+const chatMessages = document.getElementById("chatMessages");
+const chatSellerName = document.getElementById("chatSellerName");
+
 // Cache targets for async operations
 let currentProduct = null;
 let currentSeller = null;
@@ -199,7 +208,7 @@ async function loadReviews(id) {
 }
 
 // ======================================
-// SUBMIT REVIEW (FIXED FRONTEND CODE)
+// SUBMIT REVIEW
 // ======================================
 reviewForm.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -207,7 +216,7 @@ reviewForm.addEventListener("submit", async (e) => {
   if (!token) return alert("Please login first.");
 
   const rating = document.getElementById("rating").value;
-  const review_text = document.getElementById("reviewText").value; // Changed to match snake_case variables safely
+  const review_text = document.getElementById("reviewText").value;
 
   try {
     const response = await fetch(`/api/products/${productId}/reviews`, {
@@ -218,14 +227,13 @@ reviewForm.addEventListener("submit", async (e) => {
       },
       body: JSON.stringify({ 
         rating: Number(rating), 
-        review_text: review_text // Cleanly passes down to your server.js req.body
+        review_text: review_text
       })
     });
 
-    const result = await response.json(); // Read the server's response payload
+    const result = await response.json();
 
     if (!response.ok) {
-      // Instead of a generic alert, this alerts the EXACT error reason sent by your Express backend
       throw new Error(result.message || "Failed to post");
     }
 
@@ -237,6 +245,7 @@ reviewForm.addEventListener("submit", async (e) => {
     alert(`Failed to submit review: ${err.message}`);
   }
 });
+
 // ======================================
 // CONTACT SELLER MODAL INTERACTION
 // ======================================
@@ -246,7 +255,6 @@ contactSellerBtn.addEventListener("click", () => {
     return;
   }
 
-  // Handle cases where currentSeller is nested under result.seller from the API
   const sellerData = currentSeller?.seller || currentSeller;
 
   if (!sellerData) {
@@ -254,11 +262,9 @@ contactSellerBtn.addEventListener("click", () => {
     return;
   }
 
-  // Fallback chain matching your server.js columns: college_name, location_name, address
   const sellerName = sellerData.full_name || sellerData.username || "Registered Student";
   const sellerCollege = sellerData.college_name || "UniThrift Verified College";
   
-  // Use product schema properties, falling back gracefully if columns are null
   const contactNumber = currentProduct.contact_no || currentProduct.phone_number || "Provided upon request";
   const collectionPoint = currentProduct.collection_point || currentProduct.location_name || sellerData.location_name || "Campus Main Gate";
 
@@ -281,6 +287,46 @@ window.addEventListener("click", (e) => {
   if (e.target === contactModal) {
     contactModal.style.display = "none";
   }
+});
+
+// ======================================
+// CHAT POPUP INTERACTION
+// ======================================
+chatWithSellerBtn.addEventListener("click", () => {
+    const token = localStorage.getItem("unithrift_session_token");
+    if (!token) return alert("Please login to chat with the seller.");
+
+    if (!currentProduct) {
+        alert("Product data is loading. Please wait a moment.");
+        return;
+    }
+
+    const sellerData = currentSeller?.seller || currentSeller;
+    const sellerName = sellerData?.full_name || sellerData?.username || "Seller";
+    
+    chatSellerName.textContent = `Chat with ${sellerName}`;
+    chatPopup.style.display = "flex";
+    chatInput.focus();
+});
+
+closeChatBtn.addEventListener("click", () => {
+    chatPopup.style.display = "none";
+});
+
+chatForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const text = chatInput.value.trim();
+    if (!text) return;
+
+    // Render client message immediately
+    const msgDiv = document.createElement("div");
+    msgDiv.classList.add("message", "sent");
+    msgDiv.textContent = text;
+    chatMessages.appendChild(msgDiv);
+
+    // Auto scroll down to newest message
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    chatInput.value = "";
 });
 
 // Initializer execution check
