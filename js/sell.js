@@ -32,11 +32,13 @@ document.addEventListener("DOMContentLoaded", () => {
     sellForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 
+        // Target the submit button dynamically inside the form
         const submitBtn = sellForm.querySelector("button[type='submit']");
         submitBtn.disabled = true;
-        submitBtn.textContent = "Publishing & Running AI Checks...";
+        submitBtn.innerHTML = '<i class="fas fa-robot"></i> AI Verifying... Please wait.';
         verificationStatus.textContent = "Analyzing files and matching product characteristics...";
 
+        // Gather all inputs from the DOM
         const title           = document.getElementById("title").value.trim();
         const category        = document.getElementById("category").value;
         const price           = document.getElementById("price").value;
@@ -111,7 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const result = await res.json();
             if (!result.success) throw new Error(result.message);
 
-            verificationStatus.innerHTML = "<span style='color: #10b981; font-weight:700;'>✅ Listing published successfully!</span>";
+            verificationStatus.innerHTML = "<span style='color: #10b981; font-weight:700;'>✅ Verified and Listed successfully!</span>";
             setTimeout(() => { window.location.href = '/marketplace'; }, 1000);
 
         } catch (err) {
@@ -120,7 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Error: " + err.message);
         } finally {
             submitBtn.disabled = false;
-            submitBtn.textContent = "Publish Listing";
+            submitBtn.innerText = "List Product";
         }
     });
 });

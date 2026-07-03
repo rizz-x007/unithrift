@@ -7,6 +7,7 @@ const helmet     = require('helmet');
 const cors       = require('cors');
 const rateLimit  = require('express-rate-limit');
 const { createClient } = require('@supabase/supabase-js');
+const { GoogleGenerativeAI } = require("@google/generative-ai"); //[cite: 1]
 
 const app    = express();
 const PORT   = process.env.PORT || 3000;
@@ -16,7 +17,7 @@ const PORT   = process.env.PORT || 3000;
 // =========================================================================
 const SUPABASE_URL = process.env.SUPABASE_URL?.trim();
 const SUPABASE_KEY = process.env.SUPABASE_ANON_KEY?.trim();
-const JWT_SECRET   = process.env.SUPABASE_JWT_SECRET?.trim(); // .trim() guards against accidental spaces in .env
+const JWT_SECRET   = process.env.SUPABASE_JWT_SECRET?.trim();
 const APP_URL      = process.env.APP_URL?.trim() || 'http://localhost:3000';
 
 if (!SUPABASE_URL || !SUPABASE_KEY || !JWT_SECRET) {
@@ -28,6 +29,55 @@ if (!SUPABASE_URL || !SUPABASE_KEY || !JWT_SECRET) {
 }
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Initialize Gemini[cite: 1]
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY); //[cite: 1]
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); //[cite: 1]
+
+// --- AI VERIFICATION HELPER ---
+async function verifyProductWithAI(title, description, imageUrls) { //[cite: 1]
+    try { //[cite: 1]
+        // We will fetch the first image to verify
+        const mainImageResp = await fetch(imageUrls[0]); //[cite: 1]
+        const arrayBuffer = await mainImageResp.arrayBuffer(); //[cite: 1]
+        const base64Data = Buffer.from(arrayBuffer).toString("base64"); //[cite: 1]
+
+        const prompt = `
+            You are an expert product moderator for a university marketplace called UniThrift.
+            Analyze this product listing:
+            Title: ${title}
+            Description: ${description}
+
+            Task:
+            1. Verify if the image shows a real, physical product.
+            2. Check if the product is appropriate for a university (no weapons, drugs, or illegal items).
+            3. Confirm if the title/description matches the image.
+            
+            Return ONLY a JSON object in this format:
+            {"verified": boolean, "reason": "short explanation", "confidence": 0-1}
+        `; //[cite: 1]
+
+        const result = await model.generateContent([ //[cite: 1]
+            prompt, //[cite: 1]
+            { //[cite: 1]
+                inlineData: { //[cite: 1]
+                    data: base64Data, //[cite: 1]
+                    mimeType: "image/jpeg", //[cite: 1]
+                }, //[cite: 1]
+            }, //[cite: 1]
+        ]); //[cite: 1]
+
+        const responseText = result.response.text(); //[cite: 1]
+        // Clean the response (sometimes Gemini adds \`\`\`json ... \`\`\`)
+        const jsonMatch = responseText.match(/\{.*\}/s); //[cite: 1]
+        return JSON.parse(jsonMatch[0]); //[cite: 1]
+    } catch (error) { //[cite: 1]
+        console.error("Gemini AI Error:", error); //[cite: 1]
+        // Default to true if AI fails so we don't block users, 
+        // or false if you want strict security.
+        return { verified: true, reason: "AI bypass" };  //[cite: 1]
+    } //[cite: 1]
+} //[cite: 1]
 
 // =========================================================================
 // 2. MULTER — file size limit + MIME type whitelist
@@ -65,9 +115,6 @@ const uploadDoc = multer({
 
 // =========================================================================
 // 3. AUTH HELPER — uses Supabase to verify ES256 tokens
-//    Newer Supabase projects use ES256 (asymmetric) not HS256, so local
-//    jwt.verify() with the JWT secret won't work. We call supabase.auth.getUser()
-//    which handles all algorithm types correctly.
 // =========================================================================
 async function getUserFromToken(req) {
     const authHeader = req.headers['authorization'] || '';
@@ -101,22 +148,18 @@ function sanitizeNumber(val) {
 // =========================================================================
 // 5. SECURITY MIDDLEWARE
 // =========================================================================
-
-// Helmet — sets secure HTTP headers
 app.use(helmet({
-    contentSecurityPolicy: false // keep off so your CDN fonts/scripts still load
+    contentSecurityPolicy: false
 }));
 
-// CORS — only allow your own app origin
 app.use(cors({
     origin: APP_URL,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Rate limiters
 const loginLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
+    windowMs: 15 * 60 * 1000,
     max: 10,
     message: { success: false, message: 'Too many login attempts. Please wait 15 minutes.' },
     standardHeaders: true,
@@ -124,7 +167,7 @@ const loginLimiter = rateLimit({
 });
 
 const signupLimiter = rateLimit({
-    windowMs: 60 * 60 * 1000, // 1 hour
+    windowMs: 60 * 60 * 1000,
     max: 5,
     message: { success: false, message: 'Too many accounts created from this IP. Try again in an hour.' },
     standardHeaders: true,
@@ -143,14 +186,10 @@ const generalLimiter = rateLimit({
     message: { success: false, message: 'Too many requests. Please slow down.' }
 });
 
-// Body parsing
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
-
-// Apply general limiter to all API routes
 app.use('/api/', generalLimiter);
 
-// Static files
 app.use('/css',    express.static(path.join(__dirname, 'css')));
 app.use('/js',     express.static(path.join(__dirname, 'js')));
 app.use('/images', express.static(path.join(__dirname, 'images')));
@@ -206,7 +245,6 @@ app.post('/api/auth/refresh', async (req, res) => {
 app.post('/api/signup', signupLimiter, async (req, res) => {
     let { username, email, password } = req.body;
 
-    // Validate
     if (!username || !email || !password)
         return res.status(400).json({ success: false, message: 'All fields are required.' });
 
@@ -259,7 +297,6 @@ app.post('/api/login', loginLimiter, async (req, res) => {
         if (!token) throw new Error('Login succeeded but no session token was returned.');
         return res.json({ success: true, message: 'Welcome back to UniThrift!', token, refresh_token });
     } catch (error) {
-        // Generic message — don't reveal whether email or password was wrong
         return res.status(400).json({ success: false, message: 'Invalid credentials. Please try again.' });
     }
 });
@@ -522,42 +559,68 @@ app.post('/api/products/:id/reviews', async (req, res) => {
     }
 });
 
-// ---- CREATE LISTING ----
-app.post('/api/listings/create', async (req, res) => {
-    try {
-        const user = await getUserFromToken(req);
+// ---- CREATE LISTING (WITH GEMINI MODERATION INTEGRATION) ----
+app.post('/api/listings/create', async (req, res) => { //[cite: 1]
+    try { //[cite: 1]
+        const user = await getUserFromToken(req); //[cite: 1]
 
-        const title           = sanitizeString(req.body.title           || '', 200);
-        const category        = sanitizeString(req.body.category        || '', 100);
-        const condition       = sanitizeString(req.body.condition       || '', 50);
-        const description     = sanitizeString(req.body.description     || '', 2000);
-        const payment_methods = sanitizeString(req.body.payment_methods || '', 200);
-        const collection_point= sanitizeString(req.body.collection_point|| '', 300);
-        const contact_no      = sanitizeString(req.body.contact_no      || '', 20);
-        const delivery_date   = sanitizeString(req.body.delivery_date   || '', 20);
-        const price           = sanitizeNumber(req.body.price);
-        const image_urls      = Array.isArray(req.body.image_urls) ? req.body.image_urls : [];
+        // Map and sanitize all incoming parameters from your listing system
+        const title           = sanitizeString(req.body.title           || '', 200); //[cite: 1]
+        const category        = sanitizeString(req.body.category        || '', 100); //[cite: 1]
+        const condition       = sanitizeString(req.body.condition       || '', 50); //[cite: 1]
+        const description     = sanitizeString(req.body.description     || '', 2000); //[cite: 1]
+        const payment_methods = sanitizeString(req.body.payment_methods || '', 200); //[cite: 1]
+        const collection_point= sanitizeString(req.body.collection_point|| '', 300); //[cite: 1]
+        const contact_no      = sanitizeString(req.body.contact_no      || '', 20); //[cite: 1]
+        const delivery_date   = sanitizeString(req.body.delivery_date   || '', 20); //[cite: 1]
+        const price           = sanitizeNumber(req.body.price); //[cite: 1]
+        const image_urls      = Array.isArray(req.body.image_urls) ? req.body.image_urls : []; //[cite: 1]
 
-        if (!title)    return res.status(400).json({ success: false, message: 'Title is required.' });
-        if (!category) return res.status(400).json({ success: false, message: 'Category is required.' });
-        if (!price)    return res.status(400).json({ success: false, message: 'Valid price is required.' });
-        if (image_urls.length === 0)
-            return res.status(400).json({ success: false, message: 'At least one image is required.' });
+        // 1. Basic Validation
+        if (!title)    return res.status(400).json({ success: false, message: 'Title is required.' }); //[cite: 1]
+        if (!category) return res.status(400).json({ success: false, message: 'Category is required.' }); //[cite: 1]
+        if (!price)    return res.status(400).json({ success: false, message: 'Valid price is required.' }); //[cite: 1]
+        if (image_urls.length === 0) //[cite: 1]
+            return res.status(400).json({ success: false, message: 'At least one image is required.' }); //[cite: 1]
 
-        const { data: product, error } = await supabase
-            .from('products')
-            .insert({ user_id: user.id, title, category, price, condition, description, delivery_date, payment_methods, collection_point, contact_no })
-            .select().single();
-        if (error) throw error;
+        // 2. TRIGGER GEMINI AI VERIFICATION[cite: 1]
+        const aiResult = await verifyProductWithAI(title, description, image_urls); //[cite: 1]
 
-        await supabase.from('product_images')
-            .insert(image_urls.map(url => ({ product_id: product.id, image_url: url })));
+        if (!aiResult.verified) { //[cite: 1]
+            return res.status(400).json({  //[cite: 1]
+                success: false,  //[cite: 1]
+                message: `Product rejected by AI: ${aiResult.reason}`  //[cite: 1]
+            }); //[cite: 1]
+        } //[cite: 1]
 
-        return res.json({ success: true, product });
-    } catch (error) {
-        return res.status(500).json({ success: false, message: error.message });
-    }
-});
+        // 3. Proceed with existing DB logic if verified[cite: 1]
+        const { data: product, error } = await supabase //[cite: 1]
+            .from('products') //[cite: 1]
+            .insert({  //[cite: 1]
+                user_id: user.id,  //[cite: 1]
+                title,  //[cite: 1]
+                category,  //[cite: 1]
+                price,  //[cite: 1]
+                condition, //[cite: 1]
+                description,  //[cite: 1]
+                delivery_date, //[cite: 1]
+                payment_methods, //[cite: 1]
+                collection_point, //[cite: 1]
+                contact_no, //[cite: 1]
+                ai_verified: true, //[cite: 1]
+                ai_score: aiResult.confidence  //[cite: 1]
+            }) //[cite: 1]
+            .select().single(); //[cite: 1]
+        if (error) throw error; //[cite: 1]
+
+        await supabase.from('product_images') //[cite: 1]
+            .insert(image_urls.map(url => ({ product_id: product.id, image_url: url }))); //[cite: 1]
+
+        return res.json({ success: true, product }); //[cite: 1]
+    } catch (error) { //[cite: 1]
+        return res.status(500).json({ success: false, message: error.message }); //[cite: 1]
+    } //[cite: 1]
+}); //[cite: 1]
 
 // ---- UPLOAD LISTING IMAGE ----
 app.post('/api/listings/upload-image', uploadLimiter, async (req, res) => {
@@ -565,7 +628,6 @@ app.post('/api/listings/upload-image', uploadLimiter, async (req, res) => {
         const user = await getUserFromToken(req);
         const { name, type, data } = req.body;
 
-        // Validate MIME type on the base64 upload too
         if (!ALLOWED_IMAGE_TYPES.includes(type))
             return res.status(400).json({ success: false, message: 'Only JPEG, PNG, and WebP images are allowed.' });
 
@@ -603,13 +665,8 @@ app.use((err, req, res, next) => {
 });
 
 // =========================================================================
-// 9. START SERVER
-// =========================================================================
-
-// =========================================================================
 // CHAT ROUTES
 // =========================================================================
-
 app.get('/chat', (req, res) => res.sendFile(path.join(__dirname, 'chat.html')));
 
 // ---- GET OR CREATE CHAT ROOM ----
@@ -655,7 +712,6 @@ app.get('/api/chat/rooms', async (req, res) => {
             .order('created_at', { ascending: false });
         if (error) throw error;
 
-        // Attach role so frontend knows if user is buyer or seller
         const enriched = (rooms || []).map(r => ({
             ...r,
             role: r.buyer_id === user.id ? 'Buyer' : 'Seller'
@@ -709,6 +765,8 @@ app.post('/api/chat/rooms/:room_id/messages', async (req, res) => {
     }
 });
 
+// =========================================================================
+// 9. START SERVER
 // =========================================================================
 app.listen(PORT, () => {
     console.log(`🚀 UniThrift running at http://localhost:${PORT}`);

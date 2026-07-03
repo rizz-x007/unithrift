@@ -67,39 +67,58 @@ body {
 }
 
 .logo {
-    font-size: 1.75rem;
-    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.4rem;
+    font-weight: 700;
     letter-spacing: -0.5px;
-    color: var(--accent);
-    background: linear-gradient(135deg, var(--accent), #ec4899);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--text);
 }
 
+.logo-mark {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+}
+
+/* Search bar now lives inside the hero; kept generic so it can be reused elsewhere */
 .search-container {
-    width: 40%;
+    width: 100%;
+    max-width: 620px;
     display: flex;
     align-items: center;
     position: relative;
+    margin: 0 auto 26px auto;
 }
 
 .search-container input {
     width: 100%;
-    padding: 12px 50px 12px 18px;
-    border: 1px solid var(--border);
+    padding: 16px 58px 16px 22px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
     outline: none;
-    background: var(--card);
-    color: var(--text);
+    background: rgba(18, 18, 20, 0.55);
+    color: #fff;
     border-radius: 30px;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     transition: all 0.3s ease;
-    box-shadow: inset 0 2px 4px var(--shadow);
+    backdrop-filter: blur(6px);
+}
+
+.search-container input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .search-container input:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
 }
 
 .search-container button {
@@ -107,8 +126,8 @@ body {
     right: 6px;
     border: none;
     cursor: pointer;
-    width: 38px;
-    height: 38px;
+    width: 42px;
+    height: 42px;
     background: var(--accent);
     color: white;
     border-radius: 50%;
@@ -124,7 +143,46 @@ body {
 
 .nav-actions {
     display: flex;
+    align-items: center;
     gap: 14px;
+}
+
+/* Theme toggle switch (pill with sun/moon) */
+.theme-switch {
+    position: relative;
+    width: 64px;
+    height: 34px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 9px;
+    color: var(--secondary);
+    font-size: 0.75rem;
+    transition: all 0.25s ease;
+}
+
+.theme-switch:hover {
+    border-color: var(--accent);
+}
+
+.theme-switch-knob {
+    position: absolute;
+    left: 3px;
+    top: 3px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    transition: transform 0.25s ease;
+    box-shadow: 0 2px 6px rgba(99, 102, 241, 0.4);
+}
+
+body.light-theme .theme-switch-knob {
+    transform: translateX(30px);
 }
 
 .icon-btn {
@@ -175,41 +233,68 @@ body {
    HERO
 ========================================= */
 .hero {
-    min-height: 500px;
+    position: relative;
+    min-height: 560px;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
-    background: linear-gradient(rgba(5, 5, 5, 0.7), rgba(5, 5, 5, 0.9)),
-                url("https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1600") center/cover no-repeat;
-    padding: 40px 20px;
+    padding: 60px 20px 30px 20px;
+    overflow: hidden;
+}
+
+.hero-bg {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    z-index: 0;
+}
+
+.hero-bg-half {
+    flex: 1;
+    background-size: cover;
+    background-position: center;
+}
+
+.hero-bg-left {
+    filter: saturate(0.9) brightness(0.75);
+}
+
+.hero-bg-right {
+    filter: saturate(1.1) brightness(0.55) hue-rotate(-5deg);
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+        radial-gradient(ellipse 60% 70% at 50% 40%, rgba(5, 5, 5, 0.88), rgba(5, 5, 5, 0.55) 70%),
+        linear-gradient(180deg, rgba(5, 5, 5, 0.55) 0%, rgba(5, 5, 5, 0.35) 40%, rgba(5, 5, 5, 0.92) 100%);
 }
 
 .hero-content {
+    position: relative;
+    z-index: 2;
     max-width: 800px;
+    width: 100%;
 }
 
 .hero-content h1 {
-    font-size: 3.5rem;
+    font-size: 3.2rem;
     font-weight: 800;
     letter-spacing: -1px;
-    line-height: 1.15;
-    margin-bottom: 20px;
+    line-height: 1.18;
+    margin-bottom: 28px;
     color: white;
-}
-
-.hero-content p {
-    font-size: 1.2rem;
-    color: #cbd5e1;
-    font-weight: 300;
-    max-width: 600px;
-    margin: 0 auto 30px auto;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
 }
 
 .sell-btn {
     border: none;
     cursor: pointer;
-    padding: 16px 36px;
+    padding: 15px 34px;
     border-radius: 30px;
     background: linear-gradient(135deg, var(--accent), #818cf8);
     color: white;
@@ -223,6 +308,109 @@ body {
 .sell-btn:hover {
     transform: translateY(-3px);
     box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+}
+
+/* =========================================
+   TRENDING CATEGORIES
+========================================= */
+.trending-wrap {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 1300px;
+    margin-top: 44px;
+    padding: 0 4%;
+    text-align: left;
+}
+
+.trending-title {
+    color: white;
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 18px;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+}
+
+.trending-carousel {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.carousel-arrow {
+    flex: none;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(18, 18, 20, 0.6);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(6px);
+    transition: all 0.2s ease;
+}
+
+.carousel-arrow:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+.trending-list {
+    flex: 1;
+    display: flex;
+    gap: 40px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 4px 6px;
+}
+
+.trending-list::-webkit-scrollbar {
+    display: none;
+}
+
+.trend-pill {
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.trend-pill:hover,
+.trend-pill.active {
+    color: white;
+    transform: translateY(-3px);
+}
+
+.trend-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    backdrop-filter: blur(8px);
+    transition: all 0.2s ease;
+}
+
+.trend-pill:hover .trend-icon,
+.trend-pill.active .trend-icon {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
 }
 
 /* =========================================
@@ -300,10 +488,138 @@ body {
     color: white;
     font-weight: 600;
     transition: background 0.2s;
+    margin-top: 4px;
 }
 
 .filter-btn:hover {
     background: var(--accent-hover);
+}
+
+/* =========================================
+   CHECKBOX LIST (Condition filter)
+========================================= */
+.checkbox-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--text);
+    user-select: none;
+}
+
+.checkbox-item input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.checkbox-box {
+    width: 18px;
+    height: 18px;
+    flex: none;
+    border-radius: 5px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+    color: transparent;
+    transition: all 0.2s ease;
+}
+
+.checkbox-item input:checked + .checkbox-box {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+}
+
+.checkbox-item:hover .checkbox-box {
+    border-color: var(--accent);
+}
+
+/* =========================================
+   PRICE RANGE SLIDER
+========================================= */
+.price-slider {
+    position: relative;
+    height: 18px;
+    margin: 10px 2px 8px 2px;
+}
+
+.price-track {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 4px;
+    transform: translateY(-50%);
+    background: var(--border);
+    border-radius: 4px;
+}
+
+.price-range-fill {
+    position: absolute;
+    top: 50%;
+    height: 4px;
+    transform: translateY(-50%);
+    background: var(--accent);
+    border-radius: 4px;
+}
+
+.range-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 18px;
+    margin: 0;
+    background: none;
+    pointer-events: none;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.range-input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    pointer-events: all;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 3px solid var(--card);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+}
+
+.range-input::-moz-range-thumb {
+    pointer-events: all;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 3px solid var(--card);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+}
+
+.range-input::-webkit-slider-runnable-track {
+    background: transparent;
+}
+
+.price-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--secondary);
 }
 
 /* =========================================
@@ -337,7 +653,7 @@ body {
 
 .product-card {
     background: var(--card);
-    border-radius: 20px;
+    border-radius: 18px;
     overflow: hidden;
     border: 1px solid var(--border);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -350,25 +666,31 @@ body {
     border-color: rgba(99, 102, 241, 0.2);
 }
 
+.product-image-wrap {
+    background: #ffffff;
+    padding: 14px;
+}
+
 .product-image {
     width: 100%;
-    height: 220px;
-    object-fit: cover;
+    height: 170px;
+    object-fit: contain;
+    display: block;
     transition: transform 0.5s ease;
 }
 
 .product-card:hover .product-image {
-    transform: scale(1.03);
+    transform: scale(1.04);
 }
 
 .product-content {
-    padding: 20px;
+    padding: 16px 18px 20px 18px;
 }
 
 .product-content h3 {
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 600;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
     line-height: 1.4;
 }
 
@@ -386,27 +708,42 @@ body {
 }
 
 .price {
-    font-size: 1.35rem;
+    font-size: 1.15rem;
     color: var(--accent);
     font-weight: 700;
-    margin: 10px 0 15px 0;
+    margin: 2px 0 6px 0;
+}
+
+.product-location {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    color: var(--secondary);
+    margin-bottom: 14px;
+}
+
+.product-location i {
+    color: var(--secondary);
+    font-size: 0.75rem;
 }
 
 .view-btn {
     width: 100%;
-    border: 1px solid var(--border);
+    border: 1px solid var(--accent);
     cursor: pointer;
-    padding: 11px;
+    padding: 10px;
     border-radius: 10px;
     background: transparent;
-    color: var(--text);
+    color: var(--accent);
     font-weight: 600;
+    font-size: 0.85rem;
     transition: all 0.2s;
 }
 
 .view-btn:hover {
-    background: var(--card-hover);
-    border-color: var(--text);
+    background: var(--accent);
+    color: white;
 }
 
 .add-cart-btn {
@@ -718,15 +1055,26 @@ footer {
 
 @media(max-width: 768px) {
     .navbar {
-        flex-direction: column;
-        gap: 15px;
-        padding: 16px 4%;
+        padding: 14px 4%;
     }
     .search-container {
         width: 100%;
+        padding: 0 4px;
     }
     .hero-content h1 {
-        font-size: 2.3rem;
+        font-size: 2.2rem;
+    }
+    .hero {
+        min-height: 480px;
+        padding-top: 40px;
+    }
+    .trending-title {
+        font-size: 1.15rem;
+    }
+    .trend-icon {
+        width: 46px;
+        height: 46px;
+        font-size: 1.1rem;
     }
     .footer-content {
         flex-direction: column;
