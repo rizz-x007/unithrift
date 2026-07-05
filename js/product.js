@@ -1,134 +1,134 @@
 // ======================================
 // PRODUCT ID FROM URL
 // ======================================
-const params = new URLSearchParams(window.location.search);
-const productId = params.get("id");
+const params = new URLSearchParams(window.location.search); //[cite: 1]
+const productId = params.get("id"); //[cite: 1]
 
 // ======================================
 // HTML ELEMENTS
 // ======================================
-const mainImage = document.getElementById("mainImage");
-const thumbnailContainer = document.getElementById("thumbnailContainer");
-const productTitle = document.getElementById("productTitle");
-const productPrice = document.getElementById("productPrice");
-const productCondition = document.getElementById("productCondition");
-const deliveryDate = document.getElementById("deliveryDate");
-const warranty = document.getElementById("warranty");
-const paymentMethods = document.getElementById("paymentMethods");
-const productDescription = document.getElementById("productDescription");
-const sellerInfo = document.getElementById("sellerInfo");
-const reviewsContainer = document.getElementById("reviewsContainer");
-const reviewForm = document.getElementById("reviewForm");
-const verificationInfo = document.getElementById("verificationInfo");
+const mainImage = document.getElementById("mainImage"); //[cite: 1]
+const thumbnailContainer = document.getElementById("thumbnailContainer"); //[cite: 1]
+const productTitle = document.getElementById("productTitle"); //[cite: 1]
+const productPrice = document.getElementById("productPrice"); //[cite: 1]
+const productCondition = document.getElementById("productCondition"); //[cite: 1]
+const deliveryDate = document.getElementById("deliveryDate"); //[cite: 1]
+const warranty = document.getElementById("warranty"); //[cite: 1]
+const paymentMethods = document.getElementById("paymentMethods"); //[cite: 1]
+const productDescription = document.getElementById("productDescription"); //[cite: 1]
+const sellerInfo = document.getElementById("sellerInfo"); //[cite: 1]
+const reviewsContainer = document.getElementById("reviewsContainer"); //[cite: 1]
+const reviewForm = document.getElementById("reviewForm"); //[cite: 1]
+const verificationInfo = document.getElementById("verificationInfo"); //[cite: 1]
 
 // Modal Elements
-const contactSellerBtn = document.getElementById("contactSellerBtn");
-const contactModal = document.getElementById("contactModal");
-const closeModal = document.getElementById("closeModal");
-const modalSellerDetails = document.getElementById("modalSellerDetails");
+const contactSellerBtn = document.getElementById("contactSellerBtn"); //[cite: 1]
+const contactModal = document.getElementById("contactModal"); //[cite: 1]
+const closeModal = document.getElementById("closeModal"); //[cite: 1]
+const modalSellerDetails = document.getElementById("modalSellerDetails"); //[cite: 1]
 
 // Chat Popup Elements
-const chatWithSellerBtn = document.getElementById("chatWithSellerBtn");
-const chatPopup = document.getElementById("chatPopup");
-const closeChatBtn = document.getElementById("closeChatBtn");
-const chatForm = document.getElementById("chatForm");
-const chatInput = document.getElementById("chatInput");
-const chatMessages = document.getElementById("chatMessages");
-const chatSellerName = document.getElementById("chatSellerName");
+const chatWithSellerBtn = document.getElementById("chatWithSellerBtn"); //[cite: 1]
+const chatPopup = document.getElementById("chatPopup"); //[cite: 1]
+const closeChatBtn = document.getElementById("closeChatBtn"); //[cite: 1]
+const chatForm = document.getElementById("chatForm"); //[cite: 1]
+const chatInput = document.getElementById("chatInput"); //[cite: 1]
+const chatMessages = document.getElementById("chatMessages"); //[cite: 1]
+const chatSellerName = document.getElementById("chatSellerName"); //[cite: 1]
 
 // Cache targets for async operations
-let currentProduct = null;
-let currentSeller = null;
+let currentProduct = null; //[cite: 1]
+let currentSeller = null; //[cite: 1]
 
 // ======================================
 // LOAD PRODUCT & DATA
 // ======================================
 async function loadProduct() {
   try {
-    const response = await fetch(`/api/products/${productId}`);
-    const result = await response.json();
-    if (!result.success) throw new Error("Product not found");
+    const response = await fetch(`/api/products/${productId}`); //[cite: 1]
+    const result = await response.json(); //[cite: 1]
+    if (!result.success) throw new Error("Product not found"); //[cite: 1]
 
-    currentProduct = result.product;
-    productTitle.textContent = currentProduct.title;
-    productPrice.textContent = `₹${Number(currentProduct.price).toLocaleString('en-IN')}`;
-    productCondition.textContent = `Condition: ${currentProduct.condition}`;
-    deliveryDate.textContent = currentProduct.delivery_date || "Not specified";
-    warranty.textContent = currentProduct.warranty || "No warranty";
-    paymentMethods.textContent = currentProduct.payment_methods || "UPI";
-    productDescription.textContent = currentProduct.description;
+    currentProduct = result.product; //[cite: 1]
+    productTitle.textContent = currentProduct.title; //[cite: 1]
+    productPrice.textContent = `₹${Number(currentProduct.price).toLocaleString('en-IN')}`; //[cite: 1]
+    productCondition.textContent = `Condition: ${currentProduct.condition}`; //[cite: 1]
+    deliveryDate.textContent = currentProduct.delivery_date || "Not specified"; //[cite: 1]
+    warranty.textContent = currentProduct.warranty || "No warranty"; //[cite: 1]
+    paymentMethods.textContent = currentProduct.payment_methods || "UPI"; //[cite: 1]
+    productDescription.textContent = currentProduct.description; //[cite: 1]
 
     // Show sold banner if sold
-    if (currentProduct.is_sold) {
-        const soldBanner = document.createElement('div');
-        soldBanner.style.cssText = "background:#ef4444;color:white;text-align:center;padding:12px;font-weight:700;font-size:1.1rem;letter-spacing:2px;margin-bottom:16px;border-radius:10px;";
-        soldBanner.textContent = "⚠️ THIS ITEM HAS BEEN SOLD";
-        document.querySelector('.details-section').prepend(soldBanner);
-        document.getElementById('addCartBtn').disabled = true;
-        document.getElementById('addCartBtn').style.opacity = '0.4';
-        document.getElementById('addCartBtn').style.cursor = 'not-allowed';
+    if (currentProduct.is_sold) { //[cite: 1]
+        const soldBanner = document.createElement('div'); //[cite: 1]
+        soldBanner.style.cssText = "background:#ef4444;color:white;text-align:center;padding:12px;font-weight:700;font-size:1.1rem;letter-spacing:2px;margin-bottom:16px;border-radius:10px;"; //[cite: 1]
+        soldBanner.textContent = "⚠️ THIS ITEM HAS BEEN SOLD"; //[cite: 1]
+        document.querySelector('.details-section').prepend(soldBanner); //[cite: 1]
+        document.getElementById('addCartBtn').disabled = true; //[cite: 1]
+        document.getElementById('addCartBtn').style.opacity = '0.4'; //[cite: 1]
+        document.getElementById('addCartBtn').style.cursor = 'not-allowed'; //[cite: 1]
     }
 
     // Show Mark as Sold button if current user is the owner
-    const token = localStorage.getItem("unithrift_session_token");
-    if (token && !currentProduct.is_sold) {
+    const token = localStorage.getItem("unithrift_session_token"); //[cite: 1]
+    if (token && !currentProduct.is_sold) { //[cite: 1]
         try {
-            const r = await fetch('/api/profile', { headers: { 'Authorization': `Bearer ${token}` } });
-            const d = await r.json();
-            if (d.success && d.profile?.id === currentProduct.user_id) {
-                const markSoldBtn = document.createElement('button');
-                markSoldBtn.textContent = 'Mark as Sold';
-                markSoldBtn.style.cssText = "width:100%;margin-top:10px;padding:13px;border:none;border-radius:12px;background:#f59e0b;color:white;font-weight:700;font-size:1rem;cursor:pointer;transition:.2s;";
-                markSoldBtn.addEventListener('click', async () => {
-                    if (!confirm("Mark this listing as sold? This cannot be undone.")) return;
-                    markSoldBtn.textContent = "Marking...";
-                    markSoldBtn.disabled = true;
+            const r = await fetch('/api/profile', { headers: { 'Authorization': `Bearer ${token}` } }); //[cite: 1]
+            const d = await r.json(); //[cite: 1]
+            if (d.success && d.profile?.id === currentProduct.user_id) { //[cite: 1]
+                const markSoldBtn = document.createElement('button'); //[cite: 1]
+                markSoldBtn.textContent = 'Mark as Sold'; //[cite: 1]
+                markSoldBtn.style.cssText = "width:100%;margin-top:10px;padding:13px;border:none;border-radius:12px;background:#f59e0b;color:white;font-weight:700;font-size:1rem;cursor:pointer;transition:.2s;"; //[cite: 1]
+                markSoldBtn.addEventListener('click', async () => { //[cite: 1]
+                    if (!confirm("Mark this listing as sold? This cannot be undone.")) return; //[cite: 1]
+                    markSoldBtn.textContent = "Marking..."; //[cite: 1]
+                    markSoldBtn.disabled = true; //[cite: 1]
                     try {
-                        const res = await fetch(`/api/products/${productId}/sold`, {
-                            method: 'PATCH',
-                            headers: { 'Authorization': `Bearer ${token}` }
+                        const res = await fetch(`/api/products/${productId}/sold`, { //[cite: 1]
+                            method: 'PATCH', //[cite: 1]
+                            headers: { 'Authorization': `Bearer ${token}` } //[cite: 1]
                         });
-                        const data = await res.json();
-                        if (!data.success) throw new Error(data.message);
-                        window.location.reload();
+                        const data = await res.json(); //[cite: 1]
+                        if (!data.success) throw new Error(data.message); //[cite: 1]
+                        window.location.reload(); //[cite: 1]
                     } catch (err) {
-                        alert("Failed: " + err.message);
-                        markSoldBtn.textContent = "Mark as Sold";
-                        markSoldBtn.disabled = false;
+                        alert("Failed: " + err.message); //[cite: 1]
+                        markSoldBtn.textContent = "Mark as Sold"; //[cite: 1]
+                        markSoldBtn.disabled = false; //[cite: 1]
                     }
                 });
-                document.querySelector('.action-buttons').appendChild(markSoldBtn);
+                document.querySelector('.action-buttons').appendChild(markSoldBtn); //[cite: 1]
             }
         } catch (_) {}
     }
 
     // Render AI Verification Results dynamically
-    renderAIVerification(currentProduct.ai_verification_status);
+    renderAIVerification(currentProduct.ai_verification_status); //[cite: 1]
 
     // Load secondary references
-    loadSeller(currentProduct.seller_id);
-    loadImages(currentProduct.id);
-    loadReviews(currentProduct.id);
+    loadSeller(currentProduct.seller_id); //[cite: 1]
+    loadImages(currentProduct.id); //[cite: 1]
+    loadReviews(currentProduct.id); //[cite: 1]
   } catch (err) {
-    console.error(err);
-    productTitle.textContent = "Product Not Found";
+    console.error(err); //[cite: 1]
+    productTitle.textContent = "Product Not Found"; //[cite: 1]
   }
 }
 
 function renderAIVerification(statusText) {
-  if (!statusText) {
-    verificationInfo.innerHTML = `<p style="color: #b5b5b5;">No verification log data exists for this item.</p>`;
-    return;
+  if (!statusText) { //[cite: 1]
+    verificationInfo.innerHTML = `<p style="color: #b5b5b5;">No verification log data exists for this item.</p>`; //[cite: 1]
+    return; //[cite: 1]
   }
 
-  if (statusText === "VERIFIED") {
+  if (statusText === "VERIFIED") { //[cite: 1]
     verificationInfo.innerHTML = `
       <div style="display: flex; align-items: center; gap: 10px;">
         <span style="background: #10b981; color: white; padding: 5px 12px; border-radius: 20px; font-weight: 700; font-size: 0.85rem;">VERIFIED</span>
         <p style="margin: 0; color: #e5e7eb;">Product layout passes description metrics. No physical flaws detected.</p>
       </div>
-    `;
-    verificationInfo.style.borderLeft = "5px solid #10b981";
+    `; //[cite: 1]
+    verificationInfo.style.borderLeft = "5px solid #10b981"; //[cite: 1]
   } else {
     verificationInfo.innerHTML = `
       <div style="display: flex; flex-direction: column; gap: 6px;">
@@ -137,73 +137,73 @@ function renderAIVerification(statusText) {
         </div>
         <p style="margin: 5px 0 0 0; color: #fca5a5; font-weight: 500;">${statusText}</p>
       </div>
-    `;
-    verificationInfo.style.borderLeft = "5px solid #ef4444";
+    `; //[cite: 1]
+    verificationInfo.style.borderLeft = "5px solid #ef4444"; //[cite: 1]
   }
 }
 
 async function loadSeller(sellerId) {
   try {
-    const response = await fetch(`/api/user/${sellerId}`);
-    const { success, seller } = await response.json();
-    if (!success) return;
+    const response = await fetch(`/api/user/${sellerId}`); //[cite: 1]
+    const { success, seller } = await response.json(); //[cite: 1]
+    if (!success) return; //[cite: 1]
 
-    currentSeller = seller;
+    currentSeller = seller; //[cite: 1]
     sellerInfo.innerHTML = `
       <h3>${seller.username || seller.full_name || "Unknown Seller"}</h3>
       <p>College: ${seller.college_name || seller.college || "Not Added"}</p>
       <p>Location: ${seller.location_name || seller.location || "Not Added"}</p>
       <p>Verified Student: ${seller.student_verified ? "✅" : "❌"}</p>
       <p>Verified Seller: ${seller.seller_verified ? "✅" : "❌"}</p>
-    `;
+    `; //[cite: 1]
   } catch (err) {
-    console.error(err);
+    console.error(err); //[cite: 1]
   }
 }
 
 async function loadImages(id) {
   try {
-    const response = await fetch(`/api/products/${id}/images`);
-    const { images } = await response.json();
+    const response = await fetch(`/api/products/${id}/images`); //[cite: 1]
+    const { images } = await response.json(); //[cite: 1]
 
-    if (images && images.length > 0) {
-      mainImage.src = images[0].image_url;
-      thumbnailContainer.innerHTML = "";
+    if (images && images.length > 0) { //[cite: 1]
+      mainImage.src = images[0].image_url; //[cite: 1]
+      thumbnailContainer.innerHTML = ""; //[cite: 1]
 
-      images.forEach(img => {
-        const thumb = document.createElement("img");
-        thumb.src = img.image_url;
-        thumb.classList.add("thumb");
-        thumb.addEventListener("click", () => mainImage.src = img.image_url);
-        thumbnailContainer.appendChild(thumb);
+      images.forEach(img => { //[cite: 1]
+        const thumb = document.createElement("img"); //[cite: 1]
+        thumb.src = img.image_url; //[cite: 1]
+        thumb.classList.add("thumb"); //[cite: 1]
+        thumb.addEventListener("click", () => mainImage.src = img.image_url); //[cite: 1]
+        thumbnailContainer.appendChild(thumb); //[cite: 1]
       });
     }
   } catch (err) {
-    console.error(err);
+    console.error(err); //[cite: 1]
   }
 }
 
 async function loadReviews(id) {
   try {
-    const response = await fetch(`/api/products/${id}/reviews`);
-    const { reviews } = await response.json();
-    reviewsContainer.innerHTML = "";
+    const response = await fetch(`/api/products/${id}/reviews`); //[cite: 1]
+    const { reviews } = await response.json(); //[cite: 1]
+    reviewsContainer.innerHTML = ""; //[cite: 1]
 
-    if (!reviews || reviews.length === 0) {
-      reviewsContainer.innerHTML = `<div class="review-card">No reviews yet.</div>`;
-      return;
+    if (!reviews || reviews.length === 0) { //[cite: 1]
+      reviewsContainer.innerHTML = `<div class="review-card">No reviews yet.</div>`; //[cite: 1]
+      return; //[cite: 1]
     }
 
-    reviews.forEach(review => {
+    reviews.forEach(review => { //[cite: 1]
       reviewsContainer.innerHTML += `
         <div class="review-card">
           <h4>${"⭐".repeat(review.rating)}</h4>
           <p>${review.review_text}</p>
         </div>
-      `;
+      `; //[cite: 1]
     });
   } catch (err) {
-    console.error(err);
+    console.error(err); //[cite: 1]
   }
 }
 
@@ -211,38 +211,38 @@ async function loadReviews(id) {
 // SUBMIT REVIEW
 // ======================================
 reviewForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const token = localStorage.getItem("unithrift_session_token");
-  if (!token) return alert("Please login first.");
+  e.preventDefault(); //[cite: 1]
+  const token = localStorage.getItem("unithrift_session_token"); //[cite: 1]
+  if (!token) return alert("Please login first."); //[cite: 1]
 
-  const rating = document.getElementById("rating").value;
-  const review_text = document.getElementById("reviewText").value;
+  const rating = document.getElementById("rating").value; //[cite: 1]
+  const review_text = document.getElementById("reviewText").value; //[cite: 1]
 
   try {
-    const response = await fetch(`/api/products/${productId}/reviews`, {
-      method: 'POST',
+    const response = await fetch(`/api/products/${productId}/reviews`, { //[cite: 1]
+      method: 'POST', //[cite: 1]
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        'Content-Type': 'application/json', //[cite: 1]
+        'Authorization': `Bearer ${token}` //[cite: 1]
       },
       body: JSON.stringify({ 
-        rating: Number(rating), 
-        review_text: review_text
+        rating: Number(rating),  //[cite: 1]
+        review_text: review_text //[cite: 1]
       })
     });
 
-    const result = await response.json();
+    const result = await response.json(); //[cite: 1]
 
-    if (!response.ok) {
-      throw new Error(result.message || "Failed to post");
+    if (!response.ok) { //[cite: 1]
+      throw new Error(result.message || "Failed to post"); //[cite: 1]
     }
 
-    alert("Review submitted successfully!");
-    reviewForm.reset();
-    loadReviews(productId);
+    alert("Review submitted successfully!"); //[cite: 1]
+    reviewForm.reset(); //[cite: 1]
+    loadReviews(productId); //[cite: 1]
   } catch (err) {
-    console.error("Submission Error:", err);
-    alert(`Failed to submit review: ${err.message}`);
+    console.error("Submission Error:", err); //[cite: 1]
+    alert(`Failed to submit review: ${err.message}`); //[cite: 1]
   }
 });
 
@@ -250,42 +250,42 @@ reviewForm.addEventListener("submit", async (e) => {
 // CONTACT SELLER MODAL INTERACTION
 // ======================================
 contactSellerBtn.addEventListener("click", () => {
-  if (!currentProduct) {
-    alert("Product data is loading. Please wait a moment.");
-    return;
+  if (!currentProduct) { //[cite: 1]
+    alert("Product data is loading. Please wait a moment."); //[cite: 1]
+    return; //[cite: 1]
   }
 
-  const sellerData = currentSeller?.seller || currentSeller;
+  const sellerData = currentSeller?.seller || currentSeller; //[cite: 1]
 
-  if (!sellerData) {
-    alert("Seller details are unavailable right now.");
-    return;
+  if (!sellerData) { //[cite: 1]
+    alert("Seller details are unavailable right now."); //[cite: 1]
+    return; //[cite: 1]
   }
 
-  const sellerName = sellerData.full_name || sellerData.username || "Registered Student";
-  const sellerCollege = sellerData.college_name || "UniThrift Verified College";
+  const sellerName = sellerData.full_name || sellerData.username || "Registered Student"; //[cite: 1]
+  const sellerCollege = sellerData.college_name || "UniThrift Verified College"; //[cite: 1]
   
-  const contactNumber = currentProduct.contact_no || currentProduct.phone_number || "Provided upon request";
-  const collectionPoint = currentProduct.collection_point || currentProduct.location_name || sellerData.location_name || "Campus Main Gate";
+  const contactNumber = currentProduct.contact_no || currentProduct.phone_number || "Provided upon request"; //[cite: 1]
+  const collectionPoint = currentProduct.collection_point || currentProduct.location_name || sellerData.location_name || "Campus Main Gate"; //[cite: 1]
 
   modalSellerDetails.innerHTML = `
     <div class="modal-item"><strong>Name:</strong> ${sellerName}</div>
     <div class="modal-item"><strong>College:</strong> ${sellerCollege}</div>
     <div class="modal-item"><strong>Contact No:</strong> ${contactNumber}</div>
     <div class="modal-item"><strong>Collection Point:</strong> ${collectionPoint}</div>
-  `;
-  contactModal.style.display = "flex";
+  `; //[cite: 1]
+  contactModal.style.display = "flex"; //[cite: 1]
 });
 
-if (closeModal) {
+if (closeModal) { //[cite: 1]
   closeModal.addEventListener("click", () => {
-    contactModal.style.display = "none";
+    contactModal.style.display = "none"; //[cite: 1]
   });
 }
 
 window.addEventListener("click", (e) => {
-  if (e.target === contactModal) {
-    contactModal.style.display = "none";
+  if (e.target === contactModal) { //[cite: 1]
+    contactModal.style.display = "none"; //[cite: 1]
   }
 });
 
@@ -293,45 +293,82 @@ window.addEventListener("click", (e) => {
 // CHAT POPUP INTERACTION
 // ======================================
 chatWithSellerBtn.addEventListener("click", () => {
-    const token = localStorage.getItem("unithrift_session_token");
-    if (!token) return alert("Please login to chat with the seller.");
+    const token = localStorage.getItem("unithrift_session_token"); //[cite: 1]
+    if (!token) return alert("Please login to chat with the seller."); //[cite: 1]
 
-    if (!currentProduct) {
-        alert("Product data is loading. Please wait a moment.");
-        return;
+    if (!currentProduct) { //[cite: 1]
+        alert("Product data is loading. Please wait a moment."); //[cite: 1]
+        return; //[cite: 1]
     }
 
-    const sellerData = currentSeller?.seller || currentSeller;
-    const sellerName = sellerData?.full_name || sellerData?.username || "Seller";
+    const sellerData = currentSeller?.seller || currentSeller; //[cite: 1]
+    const sellerName = sellerData?.full_name || sellerData?.username || "Seller"; //[cite: 1]
     
-    chatSellerName.textContent = `Chat with ${sellerName}`;
-    chatPopup.style.display = "flex";
-    chatInput.focus();
+    chatSellerName.textContent = `Chat with ${sellerName}`; //[cite: 1]
+    chatPopup.style.display = "flex"; //[cite: 1]
+    chatInput.focus(); //[cite: 1]
 });
 
 closeChatBtn.addEventListener("click", () => {
-    chatPopup.style.display = "none";
+    chatPopup.style.display = "none"; //[cite: 1]
 });
 
-chatForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const text = chatInput.value.trim();
-    if (!text) return;
+// UPDATED: Dynamic Direct Routing + Safety Archiving Form Submit handler
+chatForm.addEventListener("submit", async (e) => {
+    e.preventDefault(); //[cite: 1]
+    const text = chatInput.value.trim(); //[cite: 1]
+    if (!text) return; //[cite: 1]
 
-    // Render client message immediately
-    const msgDiv = document.createElement("div");
-    msgDiv.classList.add("message", "sent");
-    msgDiv.textContent = text;
-    chatMessages.appendChild(msgDiv);
+    if (!currentProduct || !currentProduct.seller_id) {
+        alert("Routing failure: Seller configuration missing.");
+        return;
+    }
 
-    // Auto scroll down to newest message
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-    chatInput.value = "";
+    const sellerId = currentProduct.seller_id; //[cite: 1]
+
+    // 1. Render message to sender UI immediately for hyper-responsive connection
+    const msgDiv = document.createElement("div"); //[cite: 1]
+    msgDiv.classList.add("message", "sent"); //[cite: 1]
+    msgDiv.textContent = text; //[cite: 1]
+    chatMessages.appendChild(msgDiv); //[cite: 1]
+    chatMessages.scrollTop = chatMessages.scrollHeight; //[cite: 1]
+    chatInput.value = ""; //[cite: 1]
+
+    try {
+        // 2. BACKUP LOG: Archive the payload data to Supabase database metrics for safety verification
+        // Adjust endpoint routing depending on your custom API configuration setup
+        const safetyLoggingResponse = await fetch('/api/chats/archive', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("unithrift_session_token")}`
+            },
+            body: JSON.stringify({
+                product_id: productId, //[cite: 1]
+                seller_id: sellerId,
+                message: text
+            })
+        });
+
+        // 3. REAL-TIME DELIVERY: Direct real-time client pipeline dispatch
+        // If frontend client includes standard Supabase client global wrapper setup:
+        if (typeof supabase !== 'undefined') {
+            const dynamicDirectChannel = supabase.channel(`direct:${sellerId}`);
+            await dynamicDirectChannel.send({
+                type: 'broadcast',
+                event: 'dm',
+                payload: { msg: text, from_product: productId }
+            });
+        }
+
+    } catch (err) {
+        console.error("Hybrid delivery transmission pipeline error: ", err);
+    }
 });
 
 // Initializer execution check
-if (typeof productId !== 'undefined' && productId) {
-  loadProduct();
-} else if (productTitle) {
-  productTitle.textContent = "Invalid Product ID";
+if (typeof productId !== 'undefined' && productId) { //[cite: 1]
+  loadProduct(); //[cite: 1]
+} else if (productTitle) { //[cite: 1]
+  productTitle.textContent = "Invalid Product ID"; //[cite: 1]
 }
