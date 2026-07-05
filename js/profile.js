@@ -1,5 +1,5 @@
 // ======================================
-// ELEMENT REFS  (all IDs match profile.html)
+// ELEMENT REFS
 // ======================================
 const fullName            = document.getElementById("userName");
 const emailEl             = document.getElementById("userEmail");
@@ -15,7 +15,7 @@ const listingContainer    = document.getElementById("listingContainer");
 const newListingBtn       = document.getElementById("newListingBtn");
 const logoutBtn           = document.getElementById("logoutBtn");
 const logoutAccountBtn    = document.getElementById("logoutAccountBtn");
-const themeToggle         = document.getElementById("themeToggle");
+const navbarThemeToggle   = document.getElementById("navbarThemeToggle");
 const loadingOverlay      = document.getElementById("loadingOverlay");
 const avatarImg           = document.getElementById("userAvatar");
 const navAvatarImg        = document.getElementById("navAvatarImg");
@@ -33,13 +33,13 @@ function showLoading() { if (loadingOverlay) loadingOverlay.style.display = "fle
 function hideLoading() { if (loadingOverlay) loadingOverlay.style.display = "none"; }
 
 // ======================================
-// THEME
+// THEME ENGINE (Pure Pitch-Black Context)
 // ======================================
-const savedTheme = localStorage.getItem("theme") || "dark-theme";
+const savedTheme = localStorage.getItem("theme") || "light-theme";
 document.body.className = savedTheme;
 
-if (themeToggle) {
-    themeToggle.addEventListener("click", () => {
+if (navbarThemeToggle) {
+    navbarThemeToggle.addEventListener("click", () => {
         const isDark = document.body.classList.contains("dark-theme");
         const next   = isDark ? "light-theme" : "dark-theme";
         document.body.className = next;
@@ -99,7 +99,7 @@ async function tryRefreshToken() {
 }
 
 // ======================================
-// INIT
+// INITIALIZE APPLICATION
 // ======================================
 async function initializeProfile() {
     try {
@@ -124,7 +124,6 @@ async function initializeProfile() {
         let result = await response.json().catch(() => ({ success: false }));
         if (!result.success) { logout(); return; }
 
-        // Auto-provision missing profile row
         if (!result.profile || !result.profile.id) {
             const saveRes = await fetch("/api/profile/save", {
                 method: "POST",
@@ -167,8 +166,11 @@ async function loadProfileData(accountData) {
     if (emailEl)  emailEl.textContent    = accountData.email || "—";
     if (phoneEl)  phoneEl.textContent    = profile.phone     || "Not added";
 
-    if (profile.created_at && memberSinceEl) {
-        const d = new Date(profile.created_at);
+    // Synergizes the profile UI with the creation date from login / register database models
+    const accountCreationDate = accountData.created_at || profile.created_at;
+
+    if (accountCreationDate && memberSinceEl) {
+        const d = new Date(accountCreationDate);
         memberSinceEl.textContent = d.toLocaleString("default", { month: "long", year: "numeric" });
     }
 
@@ -189,7 +191,6 @@ async function loadProfileData(accountData) {
     if (locationInput) locationInput.value = profile.location_name || "";
     if (addressInput)  addressInput.value  = profile.address       || "";
 
-    // Verification summary
     renderVerificationSummary(profile);
 }
 
@@ -209,7 +210,6 @@ function renderVerificationSummary(profile) {
     const studentText  = studentVerified  ? "Verified"        : "Pending review";
     const sellerText   = sellerVerified   ? "Verified"        : "Not submitted";
 
-    // Update badge spans
     if (studentStatus) {
         studentStatus.textContent = studentVerified ? "Verified" : "Pending";
         studentStatus.className   = "badge-status" + (studentVerified ? "" : " badge-pending");
@@ -342,20 +342,14 @@ if (verifyStudentBtn) {
                 headers: { "Authorization": `Bearer ${token}` },
                 body: formData
             });
-           const result = await res.json().catch(() => ({
-    success: false,
-    message: "Verification failed."
-}));
+            const result = await res.json().catch(() => ({ success: false, message: "Verification failed." }));
 
-if (result.success) {
-    verifyStudentBtn.innerHTML =
-        '<i class="fas fa-check"></i> Submitted!';
-} else {
-    verifyStudentBtn.innerHTML =
-        '<i class="fas fa-times"></i> Verification Failed';
-
-    alert(result.message || "Verification failed.");
-}
+            if (result.success) {
+                verifyStudentBtn.innerHTML = '<i class="fas fa-check"></i> Submitted!';
+            } else {
+                verifyStudentBtn.innerHTML = '<i class="fas fa-times"></i> Verification Failed';
+                alert(result.message || "Verification failed.");
+            }
         } catch (err) {
             verifyStudentBtn.innerHTML = '<i class="fas fa-times"></i> Error';
         }
@@ -411,7 +405,7 @@ if (sellerVerifyBtn) {
 }
 
 // ======================================
-// NAV BUTTONS
+// NAV NAVIGATION BINDINGS
 // ======================================
 if (newListingBtn) newListingBtn.addEventListener("click", () => { window.location.href = "/sell"; });
 const cartBtn = document.getElementById("cartBtn");
@@ -446,7 +440,6 @@ async function loadListings() {
 
         listingContainer.innerHTML = result.products.map(item => renderListingCard(item)).join("");
 
-        // Wire up Quick View buttons
         listingContainer.querySelectorAll(".listing-view-btn").forEach(btn => {
             btn.addEventListener("click", () => {
                 const id = btn.getAttribute("data-id");
@@ -461,7 +454,7 @@ async function loadListings() {
 }
 
 // ======================================
-// LISTING CARD RENDERER  (matches screenshot)
+// LISTING CARD RENDERER
 // ======================================
 function renderListingCard(item) {
     const price    = item.price ? `₹${Number(item.price).toLocaleString("en-IN")}` : "Free";
@@ -474,9 +467,7 @@ function renderListingCard(item) {
         ? `<img src="${item.image_url}" alt="${title}" loading="lazy">`
         : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:2rem;"><i class="fas fa-image"></i></div>`;
 
-    const soldBadge = isSold
-        ? `<span class="listing-sold-badge">Sold</span>`
-        : "";
+    const soldBadge = isSold ? `<span class="listing-sold-badge">Sold</span>` : "";
 
     const actionRow = isArch
         ? `<span class="listing-archived-tag">Archived</span>`

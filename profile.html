@@ -8,9 +8,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
-<body class="dark-theme">
+<body class="light-theme">
 
-    <div id="loadingOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:9999; align-items:center; justify-content:center;">
+    <div id="loadingOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:9999; align-items:center; justify-content:center;">
         <div style="color:#fff; font-size:1.1rem; font-family:Poppins,sans-serif;"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
     </div>
 
@@ -21,6 +21,11 @@
         </div>
         <div class="nav-center">
             <a href="/marketplace">Browse</a>
+            <!-- Light/Dark Mode toggle located right beside the Marketplace option -->
+            <button class="theme-toggle-link" id="navbarThemeToggle" type="button">
+                <i class="fas fa-sun"></i><i class="fas fa-moon"></i>
+                <span>Theme</span>
+            </button>
             <a href="#">Deals</a>
             <a href="/updates">Updates</a>
         </div>
@@ -224,10 +229,7 @@
         </div>
     </footer>
 
-    <!-- Hidden elements kept for profile.js compatibility -->
     <button id="logoutBtn" style="display:none;"></button>
-    <button id="themeToggle" style="display:none;"></button>
-
     <script src="/js/profile.js"></script>
 </body>
 </html>
