@@ -383,15 +383,13 @@ app.get('/marketplace', (req, res) => res.sendFile(path.join(__dirname, 'marketp
 app.get('/product',     (req, res) => sendWithSupabaseConfig(res, 'product.html'));
 app.get('/product.html',(req, res) => sendWithSupabaseConfig(res, 'product.html'));
 app.get('/profile',     (req, res) => res.sendFile(path.join(__dirname, 'profile.html')));
+app.get('/checkout', (req, res) => {res.sendFile(path.join(__dirname, 'checkout.html'));});
 app.get('/sell',        (req, res) => res.sendFile(path.join(__dirname, 'sell.html')));
 app.get('/about',       (req, res) => res.sendFile(path.join(__dirname, 'about.html')));
 app.get('/terms',       (req, res) => res.sendFile(path.join(__dirname, 'terms.html')));
 app.get('/privacy',     (req, res) => res.sendFile(path.join(__dirname, 'privacy.html')));
 app.get('/help',        (req, res) => res.sendFile(path.join(__dirname, 'help.html')));
 
-// Injects window.__SUPABASE_URL__ / window.__SUPABASE_ANON__ into a page so its
-// client-side realtime code (product.js, updates.js) can open a Supabase client.
-// Only the public anon key is ever sent here — never SUPABASE_KEY (service role).
 function sendWithSupabaseConfig(res, fileName) {
     fs.readFile(path.join(__dirname, fileName), 'utf8', (err, html) => {
         if (err) return res.status(500).send('Failed to load page');
@@ -405,14 +403,8 @@ function sendWithSupabaseConfig(res, fileName) {
         res.send(injected);
     });
 }
-
 app.get('/updates', (req, res) => sendWithSupabaseConfig(res, 'updates.html'));
-
-// =========================================================================
-// 7. API ROUTES
-// =========================================================================
-
-// ---- GOOGLE OAUTH ----
+// 7. API ROUTES--
 app.post('/api/auth/google', async (req, res) => {
     try {
         const { data, error } = await supabase.auth.signInWithOAuth({
@@ -505,9 +497,6 @@ app.post('/api/signup', signupLimiter, async (req, res) => {
         return res.status(400).json({ success: false, message: error.message });
     }
 });
-
-// ---- INTERNAL: GENERATE, HASH, STORE, AND EMAIL A FRESH SIGNUP OTP ----
-// Replaces any previous pending code for this email so only one is ever valid.
 async function issueSignupOtp(email, userId, username) {
     const otp = generateOTP();
     const otpHash = hashOTP(otp);
@@ -764,7 +753,7 @@ app.post('/api/profile/verify/student', uploadLimiter, uploadDoc.single('college
         if (!req.file) return res.status(400).json({ success: false, message: 'No file uploaded' });
 
         // Gemini AI check
-        console.log(`🤖 Gemini College ID check for ${user.id}...`);
+        console.log(`Gemini College ID check for ${user.id}...`);
         const aiResult = await verifyCollegeIdWithAI(req.file.buffer, req.file.mimetype);
         console.log('   Result:', aiResult);
 
@@ -817,7 +806,7 @@ app.post('/api/profile/verify/seller', uploadLimiter, uploadDoc.fields([
         const qrFile  = req.files.paymentQr[0];
 
         // Gemini AI check on PAN card
-        console.log(`🤖 Gemini PAN card check for ${user.id}...`);
+        console.log(`Gemini PAN card check for ${user.id}...`);
         const aiResult = await verifyPanCardWithAI(panFile.buffer, panFile.mimetype);
         console.log('   Result:', aiResult);
 
@@ -1352,9 +1341,9 @@ app.post('/api/chat/rooms/:room_id/messages', async (req, res) => {
     }
 });
 
-// =========================================================================
-// 9. START SERVER
+// START SERVER (Keep this at the very bottom)
 // =========================================================================
 app.listen(PORT, () => {
     console.log(`🚀 UniThrift running at http://localhost:${PORT}`);
 });
+
