@@ -18,8 +18,8 @@ body.dark-theme {
     --card-border:  #261a3c;
     --text:         #f4f0ff;
     --muted:        #a297c4;
-    --accent:       #8b5cf6;
-    --accent-h:     #7c3aed;
+    --accent:       #6366f1; /* Swapped to Indigo from marketplace.css */
+    --accent-h:     #4f46e5;
     --cyan:         #c084fc;
     --purple:       #b794f6;
     --success:      #10b981;
@@ -67,8 +67,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 48px;
-    height: 60px;
+    padding: 16px 48px;
     background: var(--card);
     border-bottom: 1px solid var(--card-border);
     backdrop-filter: blur(12px);
@@ -79,24 +78,26 @@ body {
 .logo {
     display: flex;
     align-items: center;
-    gap: 9px;
-    font-size: 1.2rem;
+    gap: 10px;
+    font-size: 1.4rem;
     font-weight: 700;
+    letter-spacing: -0.5px;
     color: var(--text);
     text-decoration: none;
     white-space: nowrap;
 }
 
-.logo-icon {
-    width: 30px;
-    height: 30px;
-    border-radius: 8px;
-    background: linear-gradient(135deg, var(--accent-h), var(--accent), var(--purple));
+.logo-mark {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.35);
 }
 
 .nav-center {
@@ -115,7 +116,6 @@ body {
 
 .nav-center a:hover { color: var(--text); }
 
-/* Theme Toggle Button styling */
 .theme-toggle-link {
     background: none;
     border: none;
@@ -646,8 +646,8 @@ body.dark-theme .promo-overlay-purple {
     padding: 14px;
     border: none;
     border-radius: 15px;
-    background: #e11d48; /* Vibrant, modern red */
-    color: #ffffff;      /* White text for high contrast */
+    background: #e11d48;
+    color: #ffffff;
     font-size: 0.93rem;
     font-weight: 600;
     cursor: pointer;
@@ -659,17 +659,17 @@ body.dark-theme .promo-overlay-purple {
 }
 
 .logout-full-btn:hover { 
-    background: #be123c; /* Darker red on hover */
-    color: #ffffff;      /* Keeps text readable */
+    background: #be123c;
+    color: #ffffff;
 }
 
 .logout-full-btn i { 
-    color: rgba(255, 255, 255, 0.8); /* Semi-transparent white icon */
+    color: rgba(255, 255, 255, 0.8);
     transition: color 0.2s; 
 }
 
 .logout-full-btn:hover i { 
-    color: #ffffff; /* Full white icon on hover */
+    color: #ffffff;
 }
 
 
@@ -881,23 +881,25 @@ body.dark-theme .listing-price-badge {
 .footer-logo {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 1.05rem;
+    gap: 10px;
+    font-size: 1.4rem;
     font-weight: 700;
+    letter-spacing: -0.5px;
     color: var(--text);
     margin-bottom: 12px;
 }
 
 .logo-icon-sm {
-    width: 24px;
-    height: 24px;
-    border-radius: 6px;
-    background: linear-gradient(135deg, var(--accent-h), var(--accent), var(--purple));
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 0.68rem;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.35);
 }
 
 .footer-col p {
@@ -908,112 +910,5 @@ body.dark-theme .listing-price-badge {
 }
 
 .footer-tagline {
-    font-size: 0.76rem !important;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin-top: 8px;
-}
-
-.footer-col h4 {
-    font-size: 0.88rem;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 13px;
-}
-
-.footer-col ul {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 9px;
-}
-
-.footer-col ul li a {
-    text-decoration: none;
-    color: var(--muted);
-    font-size: 0.81rem;
-    transition: color 0.2s;
-}
-
-.footer-col ul li a:hover { color: var(--text); }
-
-.newsletter-form {
-    display: flex;
-    gap: 7px;
-    margin-top: 11px;
-}
-
-.newsletter-form input {
-    flex: 1;
-    padding: 8px 12px;
-    border-radius: 9px;
-    border: 1px solid var(--card-border);
-    background: var(--input-bg);
-    color: var(--text);
-    font-size: 0.81rem;
-    outline: none;
-    transition: border-color 0.2s;
-}
-
-.newsletter-form input::placeholder { color: var(--muted); }
-.newsletter-form input:focus { border-color: var(--accent); }
-
-.newsletter-form button {
-    width: 36px;
-    height: 36px;
-    flex: none;
-    border-radius: 9px;
-    border: none;
-    background: var(--accent);
-    color: white;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s;
-}
-
-.newsletter-form button:hover { background: var(--accent-h); }
-
-/* =========================================
-   RESPONSIVE
-   ========================================= */
-@media (max-width: 1024px) {
-    .profile-grid { grid-template-columns: 1fr; }
-    .footer-inner { grid-template-columns: 1fr 1fr; }
-}
-
-@media (max-width: 768px) {
-    .navbar { padding: 0 18px; }
-    .nav-center { display: flex; gap: 14px; }
-    .nav-search { display: none; }
-    .profile-header { flex-direction: column; align-items: flex-start; gap: 18px; padding: 20px; }
-    .ph-stats { flex-direction: row; flex-wrap: wrap; }
-    .profile-main { margin: 18px auto; padding: 0 12px; }
-    .footer-inner { grid-template-columns: 1fr; gap: 24px; }
-    .form-row { grid-template-columns: 1fr; }
-}
-/* 1. Base style for your dashboard boxes */
-.dashboard-box {
-  background-color: #121214; /* Matches your dark background */
-  border-radius: 12px;
-  padding: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  
-  /* CRITICAL: Smoothly animates the hover effects over 0.3 seconds */
-  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-}
-
-/* 2. The Hover State Effect */
-.dashboard-box:hover {
-  /* Lifts the card slightly upwards */
-  transform: translateY(-5px); 
-  
-  /* Brightens the border slightly */
-  border-color: rgba(138, 92, 246, 0.3); 
-  
-  /* Adds a smooth, soft purple glow underneath */
-  box-shadow: 0 10px 25px -5px rgba(138, 92, 246, 0.15), 
-              0 8px 10px -6px rgba(138, 92, 246, 0.15);
+    font-size: 0.76rem;
 }

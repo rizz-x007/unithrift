@@ -33,7 +33,7 @@ function showLoading() { if (loadingOverlay) loadingOverlay.style.display = "fle
 function hideLoading() { if (loadingOverlay) loadingOverlay.style.display = "none"; }
 
 // ======================================
-// THEME ENGINE (Pure Pitch-Black Context)
+// THEME ENGINE
 // ======================================
 const savedTheme = localStorage.getItem("theme") || "light-theme";
 document.body.className = savedTheme;
@@ -99,7 +99,8 @@ async function tryRefreshToken() {
 }
 
 // ======================================
-// AUTHENTICATED FETCH (attaches token, relays refresh, retries once on 401)
+// AUTHENTICATED FETCH
+// ======================================
 async function authFetch(url, options = {}) {
     const token        = localStorage.getItem("unithrift_session_token");
     const refreshToken = localStorage.getItem("unithrift_refresh_token");
@@ -123,7 +124,7 @@ async function authFetch(url, options = {}) {
 
     if (res.status === 401) {
         const refreshedToken = await tryRefreshToken();
-        if (!refreshedToken) return res; // let the caller handle the failure/logout
+        if (!refreshedToken) return res; 
 
         res = await fetch(url, { ...options, headers: withAuthHeaders(refreshedToken) });
         persistRefreshedTokens(res);
@@ -185,7 +186,6 @@ async function loadProfileData(accountData) {
     if (emailEl)  emailEl.textContent    = accountData.email || "—";
     if (phoneEl)  phoneEl.textContent    = profile.phone     || "Not added";
 
-    // Synergizes the profile UI with the creation date from login / register database models
     const accountCreationDate = accountData.created_at || profile.created_at;
 
     if (accountCreationDate && memberSinceEl) {
@@ -202,9 +202,9 @@ async function loadProfileData(accountData) {
         studentBadge.style.display = profile.student_verified ? "inline-flex" : "none";
     }
 
-    const collegeInput   = document.getElementById("college");
-    const locationInput  = document.getElementById("location");
-    const addressInput   = document.getElementById("address");
+    const collegeInput = document.getElementById("college");
+    const locationInput = document.getElementById("location");
+    const addressInput = document.getElementById("address");
 
     if (collegeInput)  collegeInput.value  = profile.college_name  || "";
     if (locationInput) locationInput.value = profile.location_name || "";
@@ -303,7 +303,7 @@ function renderVerificationSummary(profile) {
     }
 }
 
-// ---- Replace / Delete document actions (event delegation) ----
+// ---- Document Actions ----
 const REPLACE_TARGET = {
     student: { input: "collegeId", section: "studentVerSection" },
     pan:     { input: "panCard",   section: "sellerVerSection" },
@@ -407,7 +407,7 @@ if (avatarUpload) {
         formData.append("avatar", file);
 
         try {
-            const res    = await authFetch("/api/profile/avatar", {
+            const res = await authFetch("/api/profile/avatar", {
                 method: "POST",
                 body: formData
             });
@@ -440,7 +440,7 @@ if (verifyStudentBtn) {
         formData.append("collegeId", file);
 
         try {
-            const res    = await authFetch("/api/profile/verify/student", {
+            const res = await authFetch("/api/profile/verify/student", {
                 method: "POST",
                 body: formData
             });
@@ -487,7 +487,7 @@ if (sellerVerifyBtn) {
         formData.append("paymentQr",  qrFile);
 
         try {
-            const res    = await authFetch("/api/profile/verify/seller", {
+            const res = await authFetch("/api/profile/verify/seller", {
                 method: "POST",
                 body: formData
             });
@@ -515,7 +515,7 @@ const cartBtn = document.getElementById("cartBtn");
 if (cartBtn) cartBtn.addEventListener("click", () => { window.location.href = "/marketplace"; });
 
 // ======================================
-// HIDDEN ADMIN ENTRY (Ctrl+F10) — silently does nothing for non-admins
+// HIDDEN ADMIN ENTRY (Ctrl+F10)
 // ======================================
 document.addEventListener("keydown", async (e) => {
     if (!e.ctrlKey || e.key !== "F10") return;
@@ -539,7 +539,7 @@ async function loadListings() {
     listingContainer.innerHTML = `<p class="loading-text" style="padding:20px;"><i class="fas fa-spinner fa-spin"></i> Loading your listings...</p>`;
 
     try {
-        const res    = await authFetch("/api/profile/my-listings");
+        const res = await authFetch("/api/profile/my-listings");
         const result = await res.json().catch(() => ({ success: false }));
 
         if (!result.success || !result.products?.length) {
@@ -562,7 +562,6 @@ async function loadListings() {
                 if (id) window.location.href = `/product.html?id=${id}`;
             });
         });
-
     } catch (err) {
         console.error("Failed to load listings:", err);
         listingContainer.innerHTML = `<p style="color:var(--muted); padding:20px;">Failed to load listings.</p>`;
@@ -611,13 +610,12 @@ function renderListingCard(item) {
 }
 
 // ======================================
-// GEOAPIFY LOCATION AUTOCOMPLETE (navbar search)
+// GEOAPIFY LOCATION AUTOCOMPLETE
 // ======================================
 (function setupLocationAutocomplete() {
     const locationInput = document.getElementById("campusSearchInput");
     if (!locationInput) return;
 
-    // Wrapper + dropdown, injected right after the input
     locationInput.parentElement.style.position = "relative";
     const dropdown = document.createElement("div");
     dropdown.className = "geo-autocomplete-dropdown";
@@ -651,7 +649,6 @@ function renderListingCard(item) {
         if (addressField && !addressField.value.trim()) addressField.value = result.formatted;
         if (collegeField && result.city && !collegeField.value.trim()) collegeField.value = result.city;
 
-        // brief visual confirmation on Profile Details
         [locationField, addressField].forEach(el => {
             if (!el) return;
             el.style.transition = "background-color 0.3s";
@@ -699,7 +696,7 @@ function renderListingCard(item) {
             } catch (err) {
                 console.error("Location autocomplete failed:", err);
             }
-        }, 300); // debounce
+        }, 300); 
     });
 
     locationInput.addEventListener("keydown", (e) => {

@@ -11,7 +11,8 @@
     --card-hover:#1f1f1f;
     --text:#ffffff;
     --secondary:#b5b5b5;
-    --accent:#3b82f6;
+    --accent:#6366f1; /* Swapped to Indigo from marketplace.css */
+    --accent-hover: #4f46e5;
     --border:#2a2a2a;
 }
 
@@ -28,7 +29,7 @@ body{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    padding:20px 50px;
+    padding:16px 50px;
     background:#111;
     border-bottom:1px solid var(--border);
     position:sticky;
@@ -36,11 +37,28 @@ body{
     z-index:100;
 }
 
-.logo{
-    font-size:2rem;
-    font-weight:800;
-    color:var(--accent);
-    letter-spacing:.5px;
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--text);
+    text-decoration: none;
+}
+
+.logo-mark {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.35);
 }
 
 .nav-links{
@@ -263,8 +281,6 @@ body{
     overflow:hidden;
     z-index:1000;
     border:1px solid #e5e7eb;
-    /* Opacity/transform driven open state instead of display:none so the
-       widget can animate smoothly both opening and closing. */
     opacity:0;
     visibility:hidden;
     pointer-events:none;
@@ -355,7 +371,6 @@ body{
     transform:rotate(90deg);
 }
 
-/* Compact product context card shown under the header */
 .chat-product-card{
     display:flex;
     align-items:center;
@@ -686,29 +701,13 @@ body{
    ====================================== */
 
 @keyframes spin{
-
-    from{
-        transform:rotate(0deg);
-    }
-
-    to{
-        transform:rotate(360deg);
-    }
-
+    from{ transform:rotate(0deg); }
+    to{ transform:rotate(360deg); }
 }
 
 @keyframes fadeIn{
-
-    from{
-        opacity:0;
-        transform:translateY(12px);
-    }
-
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
-
+    from{ opacity:0; transform:translateY(12px); }
+    to{ opacity:1; transform:translateY(0); }
 }
 /* ======================================
    REVIEWS
@@ -875,17 +874,8 @@ body{
 }
 
 @keyframes modalFade{
-
-    from{
-        opacity:0;
-        transform:scale(.95);
-    }
-
-    to{
-        opacity:1;
-        transform:scale(1);
-    }
-
+    from{ opacity:0; transform:scale(.95); }
+    to{ opacity:1; transform:scale(1); }
 }
 
 /* ======================================
@@ -904,12 +894,10 @@ footer{
    ====================================== */
 
 @media(max-width:900px){
-
     .product-container{
         grid-template-columns:1fr;
         padding:25px;
     }
-
     .description-section,
     .seller-section,
     .ai-insights-section,
@@ -917,36 +905,29 @@ footer{
     .review-form-section{
         padding:25px;
     }
-
     .navbar{
         flex-direction:column;
         gap:15px;
         padding:20px;
     }
-
     .nav-links{
         flex-wrap:wrap;
         justify-content:center;
         gap:18px;
     }
-
     .action-buttons{
         flex-direction:column;
     }
-
     .main-image{
         height:350px;
     }
-
     .thumbnail-container{
         justify-content:center;
     }
-
     .thumbnail-container img{
         width:80px;
         height:80px;
     }
-
     .chat-popup{
         width:95%;
         right:2.5%;
@@ -954,5 +935,4 @@ footer{
         height:78vh;
         transform-origin:bottom center;
     }
-
 }

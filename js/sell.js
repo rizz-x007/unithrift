@@ -32,13 +32,11 @@ document.addEventListener("DOMContentLoaded", () => {
     sellForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        // Target the submit button dynamically inside the form
         const submitBtn = sellForm.querySelector("button[type='submit']");
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-robot"></i> AI Verifying... Please wait.';
         verificationStatus.textContent = "Analyzing files and matching product characteristics...";
 
-        // Gather all inputs from the DOM
         const title           = document.getElementById("title").value.trim();
         const category        = document.getElementById("category").value;
         const price           = document.getElementById("price").value;
@@ -50,7 +48,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const paymentMethods  = document.getElementById("paymentMethods").value.trim();
         const files           = imageInput.files;
 
-        // Extract the Turnstile token
         const turnstileToken  = document.querySelector('#sellForm [name="cf-turnstile-response"]')?.value;
 
         if (!turnstileToken) {
@@ -61,7 +58,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-            // 1. Upload images via base64 stream
             let image_urls = [];
 
             if (files.length > 0) {
@@ -99,7 +95,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 throw new Error("You must upload at least one product picture for AI validation checks.");
             }
 
-            // 2. Submit data to backend with Cloudflare Turnstile payload attached
             const res = await fetch('/api/listings/create', {
                 method: 'POST',
                 headers: {
@@ -129,7 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         } catch (err) {
             console.error(err);
-            if (window.turnstile) turnstile.reset(); // Reset token on validation or network failure
+            if (window.turnstile) turnstile.reset(); 
             verificationStatus.innerHTML = "❌ Failed: " + err.message;
             alert("Error: " + err.message);
         } finally {

@@ -24,7 +24,7 @@ const placeOrderBtn = document.getElementById("placeOrderBtn");
 // ======================================
 let allProducts = [];
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
-let currentUserId = null; // Saved globally to avoid API spamming
+let currentUserId = null; 
 
 // ======================================
 // LOADING
@@ -78,17 +78,14 @@ function openCart() {
             cartItems.appendChild(div);
         });
 
-        // --- STEP 1: CALCULATE THE NEW TOTALS ---
         let subtotalItemsCost = 0;
         cart.forEach(item => {
             subtotalItemsCost += Number(item.price);
         });
 
-        // Compute the 25% shipping rule
         const shippingFee = subtotalItemsCost * 0.25;
         const ultimateTotal = subtotalItemsCost + shippingFee;
 
-        // --- STEP 2: INJECT THE BREAKDOWN DISPLAY BOX ---
         let dynamicSummaryBox = document.getElementById("cartSummaryBreakdown");
 
         if (!dynamicSummaryBox) {
@@ -107,24 +104,20 @@ function openCart() {
                 <span>Total Items:</span>
                 <strong>${cart.length}</strong>
             </div>
-
             <div style="display:flex;justify-content:space-between;">
                 <span>Items Cost:</span>
                 <strong>₹${subtotalItemsCost.toLocaleString('en-IN')}</strong>
             </div>
-
             <div style="display:flex;justify-content:space-between;">
                 <span>Shipping Cost (25%):</span>
                 <strong>₹${shippingFee.toLocaleString('en-IN')}</strong>
             </div>
-
             <div style="display:flex;justify-content:space-between;margin-top:8px;padding-top:6px;border-top:1px dashed var(--border);font-size:1.1rem;color:var(--accent);font-weight:700;">
                 <span>Order Total:</span>
                 <span>₹${ultimateTotal.toLocaleString('en-IN')}</span>
             </div>
         `;
 
-        // --- STEP 3: UPDATE THE BUTTON TEXT ---
         if (placeOrderBtn) {
             placeOrderBtn.textContent = "Proceed to Payment";
         }
@@ -137,7 +130,7 @@ function openCart() {
 
 function attachRemoveButtons() {
     document.querySelectorAll(".remove-cart-btn").forEach(btn => {
-        btn.removeEventListener("click", handleRemoveItem); // Clean cleanup
+        btn.removeEventListener("click", handleRemoveItem); 
         btn.addEventListener("click", handleRemoveItem);
     });
 }
@@ -158,13 +151,12 @@ closeCart.addEventListener("click", () => { cartModal.style.display = "none"; })
 cartBtn.addEventListener("click", openCart);
 
 // ======================================
-// LOAD PRODUCTS & USER SESSION (Via API)
+// LOAD PRODUCTS & USER SESSION
 // ======================================
 async function initSessionAndProducts() {
     try {
         showLoading();
 
-        // 1. Fetch user session profile info exactly once on page load
         const token = localStorage.getItem("unithrift_session_token");
         if (token) {
             try {
@@ -174,7 +166,6 @@ async function initSessionAndProducts() {
             } catch (_) {}
         }
 
-        // 2. Fetch all products
         const response = await fetch('/api/products');
         const result = await response.json();
 

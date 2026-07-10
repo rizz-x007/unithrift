@@ -49,46 +49,27 @@ let currentSeller = null;
 let currentUserId = null;
 let currentUserName = null; 
 let activeRoomId = null;
+
 // ======================================
 // AUTH HELPERS
 // ======================================
-
 async function tryRefreshToken() {
     const refreshToken = localStorage.getItem("unithrift_refresh_token");
-
-    if (!refreshToken) {
-        return null;
-    }
+    if (!refreshToken) return null;
 
     try {
         const response = await fetch("/api/auth/refresh", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                refresh_token: refreshToken
-            })
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ refresh_token: refreshToken })
         });
 
         const data = await response.json();
+        if (!response.ok || !data.success) return null;
 
-        if (!response.ok || !data.success) {
-            return null;
-        }
-
-        localStorage.setItem(
-            "unithrift_session_token",
-            data.access_token
-        );
-
-        localStorage.setItem(
-            "unithrift_refresh_token",
-            data.refresh_token
-        );
-
+        localStorage.setItem("unithrift_session_token", data.access_token);
+        localStorage.setItem("unithrift_refresh_token", data.refresh_token);
         return data.access_token;
-
     } catch (err) {
         console.error("Token refresh failed:", err);
         return null;
@@ -96,43 +77,23 @@ async function tryRefreshToken() {
 }
 
 async function authFetch(url, options = {}) {
-
     const token = localStorage.getItem("unithrift_session_token");
     const refreshToken = localStorage.getItem("unithrift_refresh_token");
 
     const buildHeaders = (accessToken) => {
         const headers = new Headers(options.headers || {});
-
-        if (accessToken) {
-            headers.set("Authorization", `Bearer ${accessToken}`);
-        }
-
-        if (refreshToken) {
-            headers.set("X-Refresh-Token", refreshToken);
-        }
-
+        if (accessToken) headers.set("Authorization", `Bearer ${accessToken}`);
+        if (refreshToken) headers.set("X-Refresh-Token", refreshToken);
         return headers;
     };
 
-    let response = await fetch(url, {
-        ...options,
-        headers: buildHeaders(token)
-    });
-
-    if (response.status !== 401) {
-        return response;
-    }
+    let response = await fetch(url, { ...options, headers: buildHeaders(token) });
+    if (response.status !== 401) return response;
 
     const newToken = await tryRefreshToken();
+    if (!newToken) return response;
 
-    if (!newToken) {
-        return response;
-    }
-
-    return fetch(url, {
-        ...options,
-        headers: buildHeaders(newToken)
-    });
+    return fetch(url, { ...options, headers: buildHeaders(newToken) });
 }
 
 if (chatWithSellerBtn) chatWithSellerBtn.style.display = 'none';
@@ -182,7 +143,6 @@ function renderSellerLayout(token) {
         markSoldBtn.disabled = false;
       }
     });
-    
     actionButtonsWrapper.appendChild(markSoldBtn);
   }
 
@@ -211,7 +171,6 @@ function renderSellerLayout(token) {
         deleteBtn.disabled = false;
       }
     });
-    
     actionButtonsWrapper.appendChild(deleteBtn);
   }
 }
@@ -228,7 +187,6 @@ async function renderBuyerLayout(token) {
     contactSellerBtn.style.display = 'inline-flex';
     contactSellerBtn.disabled = false;
   }
-
   if (token) {
     await syncChatRoomHistory(token);
   }
@@ -279,31 +237,24 @@ async function loadProduct() {
     ]);
 
     const token = localStorage.getItem("unithrift_session_token");
-
-if (token) {
-  try {
-    const r = await authFetch('/api/profile');
-    const d = await r.json();
-
-    if (d.success) {
-      currentUserId = d.profile?.id;
-      currentUserName =
-        d.profile?.full_name ||
-        d.profile?.username ||
-        "User";
+    if (token) {
+      try {
+        const r = await authFetch('/api/profile');
+        const d = await r.json();
+        if (d.success) {
+          currentUserId = d.profile?.id;
+          currentUserName = d.profile?.full_name || d.profile?.username || "User";
+        }
+      } catch (err) {
+        console.error("Profile initialization context failure:", err);
+      }
     }
 
-  } catch (err) {
-    console.error("Profile initialization context failure:", err);
-  }
-}
-
-if (currentUserId && String(currentUserId) === String(targetedSellerId)) {
-  renderSellerLayout(token);
-} else {
-  await renderBuyerLayout(token);
-}
-
+    if (currentUserId && String(currentUserId) === String(targetedSellerId)) {
+      renderSellerLayout(token);
+    } else {
+      await renderBuyerLayout(token);
+    }
   } catch (err) {
     console.error(err);
     if (productTitle) productTitle.textContent = "Product Not Found";
@@ -680,40 +631,27 @@ async function syncChatRoomHistory() {
   try {
     const roomResponse = await authFetch('/api/chat/room', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        product_id: productId
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ product_id: productId })
     });
 
     const roomResult = await roomResponse.json();
-
     if (!roomResult.success) {
-      throw new Error(
-        roomResult.message || "No active chats found for this product yet."
-      );
+      throw new Error(roomResult.message || "No active chats found for this product yet.");
     }
 
     activeRoomId = roomResult.room_id;
-
     loadedMessageIds.clear();
 
     if (chatMessages) {
-      chatMessages.innerHTML =
-        '<div class="message system-msg">Welcome to campus chat! Protect your data.</div>';
+      chatMessages.innerHTML = '<div class="message system-msg">Welcome to campus chat! Protect your data.</div>';
     }
-
     startPolling();
-
   } catch (err) {
     console.error("Failed to restore history structural sync map alignment:", err);
-
     if (chatMessages) {
       chatMessages.innerHTML = `
-        <div class="message system-msg"
-             style="background:#e11d48;color:white;border-radius:8px;padding:10px;margin:10px;">
+        <div class="message system-msg" style="background:#e11d48;color:white;border-radius:8px;padding:10px;margin:10px;">
           ⚠️ Chat unavailable: ${err.message || "Please wait for a buyer to start a chat."}
         </div>`;
     }
@@ -722,34 +660,22 @@ async function syncChatRoomHistory() {
 
 if (chatWithSellerBtn) {
   chatWithSellerBtn.addEventListener("click", async () => {
-
     if (!localStorage.getItem("unithrift_session_token")) {
       return alert("Please login to chat with the seller.");
     }
-
     if (!currentProduct) {
       return alert("Product data is loading. Please wait a moment.");
     }
 
     const sellerData = currentSeller?.seller || currentSeller;
-    const sellerName =
-      sellerData?.full_name ||
-      sellerData?.username ||
-      "Seller";
-
-    const isSeller =
-      currentUserId &&
-      String(currentUserId) ===
-      String(currentProduct.seller_id || currentProduct.user_id);
+    const sellerName = sellerData?.full_name || sellerData?.username || "Seller";
+    const isSeller = currentUserId && String(currentUserId) === String(currentProduct.seller_id || currentProduct.user_id);
 
     if (chatSellerName) {
-      chatSellerName.textContent = isSeller
-        ? "Buyer Chat"
-        : sellerName;
+      chatSellerName.textContent = isSeller ? "Buyer Chat" : sellerName;
     }
 
     populateChatHeader();
-
     if (chatPopup) chatPopup.classList.add("open");
     if (chatInput) chatInput.focus();
 
@@ -767,7 +693,6 @@ if (closeChatBtn) {
 if (chatForm) {
   chatForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-
     const text = chatInput.value.trim();
     if (!text) return;
 
@@ -775,7 +700,6 @@ if (chatForm) {
       alert("Chat room is not ready yet. Please wait.");
       return;
     }
-
     if (!localStorage.getItem("unithrift_session_token")) {
       return alert("Session expired. Please log in again.");
     }
@@ -783,27 +707,18 @@ if (chatForm) {
     if (chatInput) chatInput.value = "";
 
     try {
-      const response = await authFetch(
-        `/api/chat/rooms/${activeRoomId}/messages`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            message_text: text
-          })
-        }
-      );
+      const response = await authFetch(`/api/chat/rooms/${activeRoomId}/messages`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message_text: text })
+      });
 
       const result = await response.json();
-
       if (result.success || response.ok) {
         await fetchMessages();
       } else {
         console.error("Failed to send message:", result.message);
       }
-
     } catch (err) {
       console.error("Transmission execution system pipeline error:", err);
     }
