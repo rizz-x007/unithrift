@@ -6,40 +6,13 @@
     <title>UniThrift | Terms of Service</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
-        body{background:#060b13;color:#f0f4ff;min-height:100vh;line-height:1.7;}
-        a{color:#6366f1;text-decoration:none;}a:hover{text-decoration:underline;}
-        .navbar{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:60px;background:#0d1526;border-bottom:1px solid #1a2640;}
-        .logo{display:flex;align-items:center;gap:9px;font-size:1.2rem;font-weight:700;color:#f0f4ff;text-decoration:none;}
-        .logo-icon{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#6366f1,#a78bfa);display:flex;align-items:center;justify-content:center;color:white;font-size:.8rem;}
-        .nav-center{display:flex;gap:28px;}.nav-center a{color:#7a8aaa;font-size:.9rem;font-weight:500;text-decoration:none;transition:color .2s;}.nav-center a:hover{color:#f0f4ff;}
-        .nav-right{display:flex;gap:10px;margin-left:auto;}
-        .nav-icon-btn{width:36px;height:36px;border-radius:10px;border:1px solid #1a2640;background:#08101e;color:#7a8aaa;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;font-size:.9rem;}.nav-icon-btn:hover{border-color:#6366f1;color:#6366f1;}
-        .page-wrap{max-width:800px;margin:60px auto;padding:0 24px 80px;}
-        .page-hero{margin-bottom:40px;}
-        .page-hero .updated{font-size:.78rem;color:#7a8aaa;margin-bottom:10px;}
-        .page-hero h1{font-size:2rem;font-weight:800;letter-spacing:-.5px;margin-bottom:10px;}
-        .page-hero p{color:#7a8aaa;font-size:.9rem;}
-        .toc{background:#0d1526;border:1px solid #1a2640;border-radius:14px;padding:20px 24px;margin-bottom:28px;}
-        .toc h3{font-size:.85rem;font-weight:700;color:#7a8aaa;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
-        .toc ol{padding-left:18px;display:flex;flex-direction:column;gap:6px;}
-        .toc ol li a{font-size:.85rem;color:#6366f1;}
-        .section{margin-bottom:28px;}
-        .section h2{font-size:1rem;font-weight:700;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #1a2640;display:flex;align-items:center;gap:9px;}
-        .section h2 i{color:#6366f1;font-size:.9rem;}
-        .section p,.section li{font-size:.88rem;color:#a0aec0;line-height:1.85;}
-        .section ul,.section ol{padding-left:20px;display:flex;flex-direction:column;gap:7px;margin-top:8px;}
-        .section p+p{margin-top:10px;}
-        .highlight-box{background:#08101e;border-left:3px solid #6366f1;border-radius:0 10px 10px 0;padding:14px 18px;margin:14px 0;}
-        .highlight-box p{font-size:.85rem;color:#a0aec0;}
-        .site-footer{background:#0d1526;border-top:1px solid #1a2640;padding:28px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;}
-        .site-footer p{color:#7a8aaa;font-size:.82rem;}
-        .footer-links{display:flex;gap:20px;}.footer-links a{color:#7a8aaa;font-size:.82rem;text-decoration:none;transition:color .2s;}.footer-links a:hover{color:#f0f4ff;}
-        @media(max-width:640px){.navbar{padding:0 16px;}.nav-center{display:none;}.page-wrap{margin:28px auto;padding:0 14px 60px;}.page-hero h1{font-size:1.5rem;}.site-footer{flex-direction:column;text-align:center;}}
-    </style>
+    <link rel="stylesheet" href="/css/theme.css">
+    <link rel="stylesheet" href="/css/terms.css">
+    <script>
+        document.documentElement.className = localStorage.getItem("theme") || "dark-theme";
+    </script>
 </head>
-<body>
+<body class="dark-theme">
 <nav class="navbar">
     <a href="/marketplace" class="logo">
         <span class="logo-icon"><i class="fas fa-bag-shopping"></i></span>
@@ -47,6 +20,10 @@
     </a>
     <div class="nav-center">
         <a href="/marketplace">Browse</a>
+        <button class="theme-toggle-link" id="navbarThemeToggle" type="button">
+            <i class="fas fa-sun"></i><i class="fas fa-moon"></i>
+            <span>Theme</span>
+        </button>
         <a href="#">Deals</a>
         <a href="/updates">Updates</a>
     </div>
@@ -150,5 +127,15 @@
         <a href="/help">Help</a>
     </div>
 </footer>
+
+<script>
+document.body.className = localStorage.getItem("theme") || "dark-theme";
+document.getElementById("navbarThemeToggle").addEventListener("click", () => {
+    const next = document.body.classList.contains("dark-theme") ? "light-theme" : "dark-theme";
+    document.body.className = next;
+    document.documentElement.className = next;
+    localStorage.setItem("theme", next);
+});
+</script>
 </body>
 </html>

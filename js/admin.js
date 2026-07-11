@@ -1,46 +1,7 @@
 // ======================================
-// AUTH HELPERS (mirrors profile.js)
-// ======================================
-function getToken() { return localStorage.getItem("unithrift_session_token"); }
-
-async function authFetch(url, options = {}) {
-    const token        = getToken();
-    const refreshToken = localStorage.getItem("unithrift_refresh_token");
-
-    function headers(tok) {
-        const h = new Headers(options.headers || {});
-        h.set("Authorization", `Bearer ${tok || ""}`);
-        if (refreshToken) h.set("X-Refresh-Token", refreshToken);
-        return h;
-    }
-    function persist(res) {
-        const a = res.headers.get("X-New-Access-Token");
-        const r = res.headers.get("X-New-Refresh-Token");
-        if (a) localStorage.setItem("unithrift_session_token", a);
-        if (r) localStorage.setItem("unithrift_refresh_token", r);
-    }
-
-    let res = await fetch(url, { ...options, headers: headers(token) });
-    persist(res);
-    if (res.status === 401) {
-        const refreshRes = await fetch("/api/auth/refresh", {
-            method: "POST", headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ refresh_token: refreshToken })
-        }).then(r => r.json()).catch(() => null);
-        if (refreshRes?.success) {
-            localStorage.setItem("unithrift_session_token", refreshRes.access_token);
-            if (refreshRes.refresh_token) localStorage.setItem("unithrift_refresh_token", refreshRes.refresh_token);
-            res = await fetch(url, { ...options, headers: headers(refreshRes.access_token) });
-            persist(res);
-        }
-    }
-    return res;
-}
-
-// ======================================
 // STATE
 // ======================================
-let queue = [];        // flattened { userId, type, username, ...doc fields }
+let queue = [];        
 let filter = "all";
 let selectedKey = null;
 
@@ -61,7 +22,7 @@ function keyOf(item) { return `${item.userId}:${item.type}`; }
 // LOAD QUEUE
 // ======================================
 async function loadQueue() {
-    if (!getToken()) { window.location.href = "/login.html"; return; }
+    if (!localStorage.getItem("unithrift_session_token")) { window.location.href = "/login.html"; return; }
 
     try {
         const res = await authFetch("/api/admin/verifications");

@@ -1,34 +1,84 @@
+// =========================================================================
+// GLOBAL AUTHENTICATED FETCH WRAPPER WITH SILENT REFRESH & DEDUPLICATION
+// =========================================================================
+(function () {
+    let refreshPromise = null;
 
-window.authFetch = async function authFetch(url, options = {}) {
-    const token        = localStorage.getItem('unithrift_session_token')  || '';
-    const refreshToken = localStorage.getItem('unithrift_refresh_token')  || '';
+    async function tryTokenRefresh() {
+        if (refreshPromise) return refreshPromise;
 
-    const headers = {
-        ...(options.headers || {}),
-        'Authorization':   `Bearer ${token}`,
-        'X-Refresh-Token': refreshToken
+        refreshPromise = (async () => {
+            const refreshToken = localStorage.getItem("unithrift_refresh_token");
+            if (!refreshToken) return null;
+
+            try {
+                const response = await fetch("/api/auth/refresh", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ refresh_token: refreshToken })
+                });
+                if (!response.ok) throw new Error("Token refresh execution failure");
+                const data = await response.json().catch(() => ({ success: false }));
+                if (data.success && data.access_token) {
+                    localStorage.setItem("unithrift_session_token", data.access_token);
+                    if (data.refresh_token) {
+                        localStorage.setItem("unithrift_refresh_token", data.refresh_token);
+                    }
+                    return data.access_token;
+                }
+            } catch (err) {
+                console.warn("Silent token refresh request failed:", err.message);
+            }
+            return null;
+        })();
+
+        try {
+            return await refreshPromise;
+        } finally {
+            refreshPromise = null;
+        }
+    }
+
+    window.authFetch = async function authFetch(url, options = {}) {
+        // Always read fresh values at header-build time — refresh tokens are
+        // rotated by Supabase on every use, so a value captured once at the
+        // top of this function would go stale the moment tryTokenRefresh()
+        // succeeds and writes a new one to localStorage.
+        const buildHeaders = () => {
+            const h = new Headers(options.headers || {});
+            h.set("Authorization", `Bearer ${localStorage.getItem("unithrift_session_token") || ""}`);
+            const rt = localStorage.getItem("unithrift_refresh_token");
+            if (rt) h.set("X-Refresh-Token", rt);
+            return h;
+        };
+
+        const persistHeaders = (res) => {
+            const a = res.headers.get("X-New-Access-Token");
+            const r = res.headers.get("X-New-Refresh-Token");
+            if (a) localStorage.setItem("unithrift_session_token", a);
+            if (r) localStorage.setItem("unithrift_refresh_token", r);
+        };
+
+        const forceLogout = () => {
+            localStorage.removeItem("unithrift_session_token");
+            localStorage.removeItem("unithrift_refresh_token");
+            setTimeout(() => { window.location.href = "/"; }, 100);
+        };
+
+        let response = await fetch(url, { ...options, headers: buildHeaders() });
+        persistHeaders(response);
+
+        if (response.status === 401) {
+            const newToken = await tryTokenRefresh();
+            if (newToken) {
+                response = await fetch(url, { ...options, headers: buildHeaders() });
+                persistHeaders(response);
+                if (response.status === 401) forceLogout();
+            } else {
+                forceLogout();
+            }
+        }
+
+        return response;
     };
-
-    const response = await fetch(url, { ...options, headers });
-
-    // If server silently refreshed the tokens, persist them now
-    const newAccess  = response.headers.get('X-New-Access-Token');
-    const newRefresh = response.headers.get('X-New-Refresh-Token');
-    if (newAccess) {
-        localStorage.setItem('unithrift_session_token',  newAccess);
-        console.log('🔄 Access token silently refreshed.');
-    }
-    if (newRefresh) {
-        localStorage.setItem('unithrift_refresh_token', newRefresh);
-    }
-
-    // Hard 401 means refresh token is also dead → force re-login
-    if (response.status === 401) {
-        localStorage.removeItem('unithrift_session_token');
-        localStorage.removeItem('unithrift_refresh_token');
-        setTimeout(() => { window.location.href = '/'; }, 100);
-    }
-
-    return response;
-};
-
+})();

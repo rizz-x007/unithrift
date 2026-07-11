@@ -6,53 +6,13 @@
     <title>UniThrift | Help Center</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
-        body{background:#060b13;color:#f0f4ff;min-height:100vh;line-height:1.7;}
-        a{color:#6366f1;text-decoration:none;}a:hover{text-decoration:underline;}
-        .navbar{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:60px;background:#0d1526;border-bottom:1px solid #1a2640;}
-        .logo{display:flex;align-items:center;gap:9px;font-size:1.2rem;font-weight:700;color:#f0f4ff;text-decoration:none;}
-        .logo-icon{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#6366f1,#a78bfa);display:flex;align-items:center;justify-content:center;color:white;font-size:.8rem;}
-        .nav-center{display:flex;gap:28px;}.nav-center a{color:#7a8aaa;font-size:.9rem;font-weight:500;text-decoration:none;transition:color .2s;}.nav-center a:hover{color:#f0f4ff;}
-        .nav-right{display:flex;gap:10px;margin-left:auto;}
-        .nav-icon-btn{width:36px;height:36px;border-radius:10px;border:1px solid #1a2640;background:#08101e;color:#7a8aaa;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;font-size:.9rem;}.nav-icon-btn:hover{border-color:#6366f1;color:#6366f1;}
-        .page-wrap{max-width:860px;margin:60px auto;padding:0 24px 80px;}
-        .page-hero{text-align:center;margin-bottom:44px;}
-        .page-hero h1{font-size:2.2rem;font-weight:800;letter-spacing:-.5px;margin-bottom:10px;}
-        .page-hero p{color:#7a8aaa;font-size:.95rem;}
-        .search-bar{display:flex;align-items:center;gap:10px;background:#0d1526;border:1px solid #1a2640;border-radius:30px;padding:12px 20px;max-width:500px;margin:20px auto 0;}
-        .search-bar i{color:#7a8aaa;}
-        .search-bar input{background:none;border:none;outline:none;color:#f0f4ff;font-size:.9rem;flex:1;}
-        .search-bar input::placeholder{color:#7a8aaa;}
-        .topic-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:40px;}
-        .topic-card{background:#0d1526;border:1px solid #1a2640;border-radius:14px;padding:20px;cursor:pointer;transition:border-color .2s,transform .2s;text-align:center;}
-        .topic-card:hover{border-color:#6366f1;transform:translateY(-3px);}
-        .topic-card i{font-size:1.4rem;color:#6366f1;margin-bottom:10px;display:block;}
-        .topic-card h3{font-size:.88rem;font-weight:600;margin-bottom:4px;}
-        .topic-card p{font-size:.76rem;color:#7a8aaa;}
-        .faq-section{margin-bottom:36px;}
-        .faq-section h2{font-size:1.05rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:9px;}
-        .faq-section h2 i{color:#6366f1;}
-        .faq-item{background:#0d1526;border:1px solid #1a2640;border-radius:12px;margin-bottom:10px;overflow:hidden;}
-        .faq-q{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;cursor:pointer;font-size:.88rem;font-weight:500;transition:background .2s;}
-        .faq-q:hover{background:#08101e;}
-        .faq-q i.arrow{color:#7a8aaa;transition:transform .25s;font-size:.8rem;}
-        .faq-a{display:none;padding:0 20px 16px;font-size:.85rem;color:#a0aec0;line-height:1.8;border-top:1px solid #1a2640;padding-top:14px;}
-        .faq-item.open .faq-a{display:block;}
-        .faq-item.open .arrow{transform:rotate(180deg);}
-        .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-        .contact-card{background:#0d1526;border:1px solid #1a2640;border-radius:14px;padding:24px;display:flex;align-items:flex-start;gap:14px;}
-        .contact-icon{width:42px;height:42px;border-radius:12px;background:rgba(99,102,241,.12);display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:#6366f1;flex:none;}
-        .contact-card h4{font-size:.88rem;font-weight:600;margin-bottom:4px;}
-        .contact-card p{font-size:.8rem;color:#7a8aaa;}
-        .contact-card a{font-size:.83rem;color:#6366f1;display:block;margin-top:6px;}
-        .site-footer{background:#0d1526;border-top:1px solid #1a2640;padding:28px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;}
-        .site-footer p{color:#7a8aaa;font-size:.82rem;}
-        .footer-links{display:flex;gap:20px;}.footer-links a{color:#7a8aaa;font-size:.82rem;text-decoration:none;transition:color .2s;}.footer-links a:hover{color:#f0f4ff;}
-        @media(max-width:640px){.navbar{padding:0 16px;}.nav-center{display:none;}.page-wrap{margin:28px auto;padding:0 14px 60px;}.page-hero h1{font-size:1.6rem;}.topic-grid{grid-template-columns:1fr 1fr;}.contact-grid{grid-template-columns:1fr;}.site-footer{flex-direction:column;text-align:center;}}
-    </style>
+    <link rel="stylesheet" href="/css/theme.css">
+    <link rel="stylesheet" href="/css/help.css">
+    <script>
+        document.documentElement.className = localStorage.getItem("theme") || "dark-theme";
+    </script>
 </head>
-<body>
+<body class="dark-theme">
 <nav class="navbar">
     <a href="/marketplace" class="logo">
         <span class="logo-icon"><i class="fas fa-bag-shopping"></i></span>
@@ -60,6 +20,10 @@
     </a>
     <div class="nav-center">
         <a href="/marketplace">Browse</a>
+        <button class="theme-toggle-link" id="navbarThemeToggle" type="button">
+            <i class="fas fa-sun"></i><i class="fas fa-moon"></i>
+            <span>Theme</span>
+        </button>
         <a href="#">Deals</a>
         <a href="/updates">Updates</a>
     </div>
@@ -81,12 +45,12 @@
     </div>
 
     <div class="topic-grid">
-        <div class="topic-card" onclick="scrollTo('getting-started')"><i class="fas fa-rocket"></i><h3>Getting Started</h3><p>Create account, verify, browse</p></div>
-        <div class="topic-card" onclick="scrollTo('selling')"><i class="fas fa-tag"></i><h3>Selling</h3><p>List items, pricing, handover</p></div>
-        <div class="topic-card" onclick="scrollTo('buying')"><i class="fas fa-cart-shopping"></i><h3>Buying</h3><p>Find items, contact sellers</p></div>
-        <div class="topic-card" onclick="scrollTo('verification')"><i class="fas fa-shield-halved"></i><h3>Verification</h3><p>ID checks, PAN, seller access</p></div>
-        <div class="topic-card" onclick="scrollTo('chat')"><i class="fas fa-comment"></i><h3>Chat & Messages</h3><p>Messaging, notifications</p></div>
-        <div class="topic-card" onclick="scrollTo('account')"><i class="fas fa-user-gear"></i><h3>Account</h3><p>Profile, password, logout</p></div>
+        <div class="topic-card" onclick="scrollToTopic('getting-started')"><i class="fas fa-rocket"></i><h3>Getting Started</h3><p>Create account, verify, browse</p></div>
+        <div class="topic-card" onclick="scrollToTopic('selling')"><i class="fas fa-tag"></i><h3>Selling</h3><p>List items, pricing, handover</p></div>
+        <div class="topic-card" onclick="scrollToTopic('buying')"><i class="fas fa-cart-shopping"></i><h3>Buying</h3><p>Find items, contact sellers</p></div>
+        <div class="topic-card" onclick="scrollToTopic('verification')"><i class="fas fa-shield-halved"></i><h3>Verification</h3><p>ID checks, PAN, seller access</p></div>
+        <div class="topic-card" onclick="scrollToTopic('chat')"><i class="fas fa-comment"></i><h3>Chat & Messages</h3><p>Messaging, notifications</p></div>
+        <div class="topic-card" onclick="scrollToTopic('account')"><i class="fas fa-user-gear"></i><h3>Account</h3><p>Profile, password, logout</p></div>
     </div>
 
     <!-- GETTING STARTED -->
@@ -237,6 +201,15 @@
 </footer>
 
 <script>
+// Apply saved theme to body once DOM is ready
+document.body.className = localStorage.getItem("theme") || "dark-theme";
+document.getElementById("navbarThemeToggle").addEventListener("click", () => {
+    const next = document.body.classList.contains("dark-theme") ? "light-theme" : "dark-theme";
+    document.body.className = next;
+    document.documentElement.className = next;
+    localStorage.setItem("theme", next);
+});
+
 // FAQ accordion
 document.querySelectorAll('.faq-q').forEach(q => {
     q.addEventListener('click', () => {
@@ -248,7 +221,7 @@ document.querySelectorAll('.faq-q').forEach(q => {
 });
 
 // Topic card scroll
-function scrollTo(id) {
+function scrollToTopic(id) {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 

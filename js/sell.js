@@ -68,12 +68,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         const reader = new FileReader();
                         reader.onload = async ev => {
                             try {
-                                const res = await fetch('/api/listings/upload-image', {
+                                const res = await authFetch('/api/listings/upload-image', {
                                     method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'Authorization': `Bearer ${token}`
-                                    },
+                                    headers: { 'Content-Type': 'application/json' },
                                     body: JSON.stringify({
                                         name: file.name,
                                         type: file.type,
@@ -95,12 +92,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 throw new Error("You must upload at least one product picture for AI validation checks.");
             }
 
-            const res = await fetch('/api/listings/create', {
+            const res = await authFetch('/api/listings/create', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
                     title, 
                     category, 

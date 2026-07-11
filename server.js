@@ -78,7 +78,9 @@ async function askGemini(parts) {
         model: GEMINI_MODEL,
         contents: [{ role: 'user', parts }]
     });
-    return response.text || '';
+    if (!response) return '';
+    // Handle both getter property and method structures safely
+    return typeof response.text === 'function' ? response.text() : (response.text || '');
 }
 
 function extractJson(text) {

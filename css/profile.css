@@ -18,7 +18,7 @@ body.dark-theme {
     --card-border:  #261a3c;
     --text:         #f4f0ff;
     --muted:        #a297c4;
-    --accent:       #6366f1; /* Swapped to Indigo from marketplace.css */
+    --accent:       #6366f1;
     --accent-h:     #4f46e5;
     --cyan:         #c084fc;
     --purple:       #b794f6;
@@ -28,6 +28,7 @@ body.dark-theme {
     --input-bg:     #080808;
     --glow-cyan:    rgba(192, 132, 252, 0.4);
     --glow-purple:  rgba(183, 148, 246, 0.35);
+    --ring:         rgba(99, 102, 241, 0.35);
 }
 
 body.light-theme {
@@ -47,6 +48,7 @@ body.light-theme {
     --input-bg:     #fcfaff;
     --glow-cyan:    rgba(192, 132, 252, 0.18);
     --glow-purple:  rgba(183, 148, 246, 0.18);
+    --ring:         rgba(139, 92, 246, 0.25);
 }
 
 body {
@@ -311,7 +313,7 @@ body.dark-theme .glow-card::before {
 .ph-identity h1 {
     font-size: 1.6rem;
     font-weight: 700;
-    letter-spacing: -0.3px;
+    letter-spacing: -0.5px;
     margin-bottom: 5px;
 }
 
@@ -485,7 +487,10 @@ textarea {
 
 input[type="text"]:focus,
 input[type="email"]:focus,
-textarea:focus { border-color: var(--accent); }
+textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--ring);
+}
 
 input[type="text"]::placeholder,
 input[type="email"]::placeholder,
@@ -546,7 +551,7 @@ textarea { resize: vertical; }
     font-weight: 600;
     cursor: pointer;
     border: none;
-    transition: all 0.2s;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .btn-primary { 
@@ -556,6 +561,9 @@ textarea { resize: vertical; }
 .btn-primary:hover { 
     background: linear-gradient(135deg, var(--accent), var(--purple)); 
     transform: translateY(-1px); 
+}
+.btn-primary:active {
+    transform: translateY(0) scale(0.97);
 }
 .btn-sm { padding: 8px 16px; font-size: 0.8rem; }
 
@@ -689,12 +697,16 @@ body.dark-theme .promo-overlay-purple {
     align-items: center;
     justify-content: center;
     gap: 9px;
-    transition: background 0.2s, color 0.2s;
+    transition: background 0.2s, color 0.2s, transform 0.1s;
 }
 
 .logout-full-btn:hover { 
     background: #be123c;
     color: #ffffff;
+}
+
+.logout-full-btn:active {
+    transform: scale(0.97);
 }
 
 .logout-full-btn i { 
@@ -839,10 +851,14 @@ body.dark-theme .listing-price-badge {
     font-size: 0.76rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .listing-view-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+.listing-view-btn:active {
+    transform: scale(0.96);
+}
 
 .listing-heart-btn {
     width: 32px;
@@ -861,6 +877,10 @@ body.dark-theme .listing-price-badge {
 }
 
 .listing-heart-btn:hover { border-color: var(--danger); color: var(--danger); }
+
+.listing-heart-btn:active {
+    transform: scale(0.9);
+}
 
 .listing-delete-btn {
     width: 32px;
@@ -882,6 +902,10 @@ body.dark-theme .listing-price-badge {
     border-color: var(--danger);
     background: rgba(244, 63, 94, 0.1);
     color: var(--danger);
+}
+
+.listing-delete-btn:active {
+    transform: scale(0.9);
 }
 
 .listing-delete-btn:disabled { opacity: 0.6; cursor: not-allowed; }

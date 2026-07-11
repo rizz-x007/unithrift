@@ -74,83 +74,6 @@ if (logoutAccountBtn) logoutAccountBtn.addEventListener("click", logout);
 })();
 
 // ======================================
-// TOKEN REFRESH
-// ======================================
-// Refresh tokens are single-use — if several authFetch calls hit a 401 at
-// the same moment (common on pages that fire multiple requests on load),
-// each one must NOT independently redeem the same stored refresh token,
-// since the second call to reach Supabase would get "Already Used". This
-// in-flight promise makes every concurrent caller share the same request.
-let _refreshInFlight = null;
-
-async function tryRefreshToken() {
-    if (_refreshInFlight) return _refreshInFlight;
-
-    _refreshInFlight = (async () => {
-        const refreshToken = localStorage.getItem("unithrift_refresh_token");
-        if (!refreshToken) return null;
-        try {
-            const res = await fetch("/api/auth/refresh", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ refresh_token: refreshToken })
-            });
-            if (!res.ok) return null;
-            const result = await res.json().catch(() => ({ success: false }));
-            if (result.success && result.access_token) {
-                localStorage.setItem("unithrift_session_token", result.access_token);
-                if (result.refresh_token) localStorage.setItem("unithrift_refresh_token", result.refresh_token);
-                return result.access_token;
-            }
-        } catch (err) {
-            console.warn("Token refresh failed:", err);
-        }
-        return null;
-    })();
-
-    try {
-        return await _refreshInFlight;
-    } finally {
-        _refreshInFlight = null;
-    }
-}
-
-// ======================================
-// AUTHENTICATED FETCH
-// ======================================
-async function authFetch(url, options = {}) {
-    const token        = localStorage.getItem("unithrift_session_token");
-    const refreshToken = localStorage.getItem("unithrift_refresh_token");
-
-    function withAuthHeaders(tok) {
-        const headers = new Headers(options.headers || {});
-        headers.set("Authorization", `Bearer ${tok || ""}`);
-        if (refreshToken) headers.set("X-Refresh-Token", refreshToken);
-        return headers;
-    }
-
-    function persistRefreshedTokens(res) {
-        const newAccess  = res.headers.get("X-New-Access-Token");
-        const newRefresh = res.headers.get("X-New-Refresh-Token");
-        if (newAccess)  localStorage.setItem("unithrift_session_token", newAccess);
-        if (newRefresh) localStorage.setItem("unithrift_refresh_token", newRefresh);
-    }
-
-    let res = await fetch(url, { ...options, headers: withAuthHeaders(token) });
-    persistRefreshedTokens(res);
-
-    if (res.status === 401) {
-        const refreshedToken = await tryRefreshToken();
-        if (!refreshedToken) return res; 
-
-        res = await fetch(url, { ...options, headers: withAuthHeaders(refreshedToken) });
-        persistRefreshedTokens(res);
-    }
-
-    return res;
-}
-
-// ======================================
 // INITIALIZE APPLICATION
 // ======================================
 async function initializeProfile() {
@@ -320,7 +243,6 @@ function renderVerificationSummary(profile) {
     }
 }
 
-// ---- Document Actions ----
 const REPLACE_TARGET = {
     student: { input: "collegeId", section: "studentVerSection" },
     pan:     { input: "panCard",   section: "sellerVerSection" },
@@ -543,7 +465,7 @@ document.addEventListener("keydown", async (e) => {
         const res    = await authFetch("/api/admin/check");
         const result = await res.json().catch(() => ({ isAdmin: false }));
         if (result.isAdmin) window.location.href = "/admin";
-    } catch (err) { /* fail silent */ }
+    } catch (err) { }
 });
 
 // ======================================
@@ -600,7 +522,6 @@ function renderListingCard(item) {
         : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:2rem;"><i class="fas fa-image"></i></div>`;
 
     const soldBadge = isSold ? `<span class="listing-sold-badge">Sold</span>` : "";
-
     const deleteBtn = `<button class="listing-delete-btn" data-id="${item.id}" title="Delete listing"><i class="fas fa-trash"></i></button>`;
 
     const actionRow = isArch
@@ -629,9 +550,6 @@ function renderListingCard(item) {
         </div>`;
 }
 
-// ======================================
-// DELETE LISTING (Quick View action row)
-// ======================================
 if (listingContainer) {
     listingContainer.addEventListener("click", async (e) => {
         const deleteBtn = e.target.closest(".listing-delete-btn");
@@ -666,9 +584,6 @@ if (listingContainer) {
     });
 }
 
-// ======================================
-// FILE INPUT SELECTED-STATE (visual feedback once a file is chosen)
-// ======================================
 document.querySelectorAll(".file-input").forEach(input => {
     input.addEventListener("change", () => {
         input.classList.toggle("file-input--selected", input.files.length > 0);

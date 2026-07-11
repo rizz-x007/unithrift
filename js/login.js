@@ -566,9 +566,20 @@ if (googleLoginBtn) {
     if (!token) return;
 
     try {
+        const refreshToken = localStorage.getItem("unithrift_refresh_token") || "";
         const response = await fetch('/api/profile', {
-            headers: { 'Authorization': `Bearer ${token}` }
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                ...(refreshToken ? { 'X-Refresh-Token': refreshToken } : {})
+            }
         });
+
+        // Guard: if the token in localStorage has changed since this check
+        // started, a real login (or another tab) already replaced it with a
+        // fresher session while this request was in flight. Acting on this
+        // stale response — clearing tokens on failure, or overwriting on
+        // success — would clobber that newer, valid session. Bail out.
+        if (localStorage.getItem("unithrift_session_token") !== token) return;
 
         if (response.status === 401 || !response.ok) {
             console.warn("Session token validation failed or returned 401. Clearing tracking cache...");
@@ -576,6 +587,15 @@ if (googleLoginBtn) {
             localStorage.removeItem("unithrift_refresh_token");
             return;
         }
+
+        // Server may have silently refreshed an expired access token using the
+        // X-Refresh-Token header above — persist the rotated pair so the
+        // marketplace page we're about to redirect to doesn't inherit a
+        // dead access token.
+        const newAccess  = response.headers.get("X-New-Access-Token");
+        const newRefresh = response.headers.get("X-New-Refresh-Token");
+        if (newAccess)  localStorage.setItem("unithrift_session_token", newAccess);
+        if (newRefresh) localStorage.setItem("unithrift_refresh_token", newRefresh);
 
         const result = await response.json();
         if (result.success) {

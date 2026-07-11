@@ -6,12 +6,30 @@
 <title>UniThrift | Review Queue</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script>
+    document.documentElement.className = localStorage.getItem("theme") || "dark-theme";
+    document.addEventListener("DOMContentLoaded", () => {
+        document.body.className = localStorage.getItem("theme") || "dark-theme";
+    });
+</script>
 <style>
   :root{
     --bg:#0c0d15; --panel:#151726; --panel-2:#1b1e30; --line:rgba(255,255,255,0.08);
     --purple:#7c5cff; --purple-dim:rgba(124,92,255,0.15);
     --green:#34d399; --red:#ff6b6b;
     --text:#e9e9f2; --muted:#8b8d9c;
+  }
+  html.light-theme, body.light-theme {
+    --bg: #f8f5ff;
+    --panel: rgba(255, 255, 255, 0.65);
+    --panel-2: rgba(170, 150, 255, 0.12);
+    --line: rgba(170, 150, 255, 0.3);
+    --purple: #8b5cf6;
+    --purple-dim: rgba(139, 92, 246, 0.15);
+    --green: #059669;
+    --red: #ef4444;
+    --text: #2f2545;
+    --muted: #6d6486;
   }
   *{box-sizing:border-box;}
   body{margin:0;background:var(--bg);color:var(--text);font-family:'Poppins',sans-serif;height:100vh;overflow:hidden;}
@@ -111,6 +129,7 @@
 
 <div class="toast" id="toast"></div>
 
+<script src="/js/auth-fetch.js"></script>
 <script src="/js/admin.js"></script>
 </body>
 </html>

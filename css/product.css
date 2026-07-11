@@ -12,12 +12,16 @@
     --text:#ffffff;
     --secondary:#b5b5b5;
     --accent:#3b82f6;
+    --accent-hover: #2563eb;
     --border:#2a2a2a;
+    --ring: rgba(59, 130, 246, 0.25);
+    --transition-premium: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 body{
     background:var(--bg);
     color:var(--text);
+    -webkit-font-smoothing: antialiased;
 }
 
 /* ======================================
@@ -40,7 +44,7 @@ body{
     font-size:2rem;
     font-weight:800;
     color:var(--accent);
-    letter-spacing:.5px;
+    letter-spacing:-0.5px;
 }
 
 .nav-links{
@@ -52,7 +56,7 @@ body{
     color:white;
     text-decoration:none;
     font-weight:500;
-    transition:.25s ease;
+    transition: var(--transition-premium);
 }
 
 .nav-links a:hover{
@@ -86,7 +90,7 @@ body{
     object-fit:cover;
     border-radius:20px;
     border:1px solid var(--border);
-    transition:.3s ease;
+    transition: var(--transition-premium);
     background:#111;
 }
 
@@ -104,7 +108,7 @@ body{
     border-radius:10px;
     cursor:pointer;
     border:2px solid transparent;
-    transition:.25s ease;
+    transition: var(--transition-premium);
 }
 
 .thumbnail-container img:hover{
@@ -123,7 +127,8 @@ body{
 .details-section h1{
     font-size:2.5rem;
     margin-bottom:15px;
-    line-height:1.25;
+    line-height:1.2;
+    letter-spacing: -0.8px;
 }
 
 .price{
@@ -150,7 +155,7 @@ body{
     border-radius:20px;
     margin-bottom:25px;
     border:1px solid var(--border);
-    transition:.25s ease;
+    transition: var(--transition-premium);
 }
 
 .info-card:hover{
@@ -197,11 +202,7 @@ body{
     gap:10px;
     background:var(--accent);
     color:white;
-    transition:
-        transform .2s,
-        opacity .2s,
-        background .2s,
-        box-shadow .2s;
+    transition: var(--transition-premium);
 }
 
 .chat-seller-trigger{
@@ -215,7 +216,12 @@ body{
 }
 
 .action-buttons button:active{
-    transform:translateY(0);
+    transform:translateY(0) scale(0.97);
+}
+
+.action-buttons button:focus-visible{
+    outline: none;
+    box-shadow: 0 0 0 3px var(--ring);
 }
 
 .action-buttons button:disabled{
@@ -235,6 +241,7 @@ body{
 
 .description-section h2{
     margin-bottom:20px;
+    letter-spacing: -0.5px;
 }
 
 #productDescription{
@@ -263,14 +270,12 @@ body{
     overflow:hidden;
     z-index:1000;
     border:1px solid #e5e7eb;
-    /* Opacity/transform driven open state instead of display:none so the
-       widget can animate smoothly both opening and closing. */
     opacity:0;
     visibility:hidden;
     pointer-events:none;
     transform:translateY(24px) scale(.96);
     transform-origin:bottom right;
-    transition:opacity .25s ease, transform .25s ease, visibility .25s;
+    transition:opacity .25s cubic-bezier(0.16, 1, 0.3, 1), transform .25s cubic-bezier(0.16, 1, 0.3, 1), visibility .25s;
 }
 
 .chat-popup.open{
@@ -338,6 +343,9 @@ body{
     font-size:.72rem;
     font-weight:600;
     color:#34d399;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
 }
 
 .close-chat-btn{
@@ -346,7 +354,7 @@ body{
     color:#9ca3af;
     font-size:1.6rem;
     cursor:pointer;
-    transition:.2s ease;
+    transition: var(--transition-premium);
     line-height:1;
 }
 
@@ -506,7 +514,7 @@ body{
     padding:10px 14px;
     outline:none;
     font-size:.88rem;
-    transition:.2s ease;
+    transition: var(--transition-premium);
 }
 
 #chatInput:focus{
@@ -522,7 +530,7 @@ body{
     padding:0 18px;
     cursor:pointer;
     font-weight:600;
-    transition:.2s ease;
+    transition: var(--transition-premium);
 }
 
 #chatForm button:hover{
@@ -542,7 +550,7 @@ body{
     border:1px solid var(--border);
     border-radius:20px;
     padding:25px;
-    transition:.25s ease;
+    transition: var(--transition-premium);
 }
 
 #sellerInfo:hover{
@@ -574,7 +582,7 @@ body{
     border:1px solid var(--border);
     border-radius:20px;
     padding:25px;
-    transition:.25s ease;
+    transition: var(--transition-premium);
 }
 
 .ai-card:hover,
@@ -686,29 +694,23 @@ body{
    ====================================== */
 
 @keyframes spin{
-
     from{
         transform:rotate(0deg);
     }
-
     to{
         transform:rotate(360deg);
     }
-
 }
 
 @keyframes fadeIn{
-
     from{
         opacity:0;
         transform:translateY(12px);
     }
-
     to{
         opacity:1;
         transform:translateY(0);
     }
-
 }
 /* ======================================
    REVIEWS
@@ -729,7 +731,7 @@ body{
     border:1px solid var(--border);
     border-radius:16px;
     padding:22px;
-    transition:.25s ease;
+    transition: var(--transition-premium);
 }
 
 .review-card:hover{
@@ -775,7 +777,7 @@ body{
     padding:12px;
     border-radius:10px;
     outline:none;
-    transition:.2s ease;
+    transition: var(--transition-premium);
 }
 
 #reviewForm select:focus,
@@ -797,12 +799,16 @@ body{
     background:var(--accent);
     color:#fff;
     font-weight:600;
-    transition:.25s ease;
+    transition: var(--transition-premium);
 }
 
 #reviewForm button:hover{
     transform:translateY(-2px);
     box-shadow:0 10px 24px rgba(59,130,246,.25);
+}
+
+#reviewForm button:active{
+    transform:translateY(0) scale(0.97);
 }
 
 #reviewForm button:disabled{
@@ -847,7 +853,7 @@ body{
     font-size:1.8rem;
     color:var(--secondary);
     cursor:pointer;
-    transition:.2s ease;
+    transition: var(--transition-premium);
 }
 
 .modal-close:hover{
@@ -875,17 +881,14 @@ body{
 }
 
 @keyframes modalFade{
-
     from{
         opacity:0;
         transform:scale(.95);
     }
-
     to{
         opacity:1;
         transform:scale(1);
     }
-
 }
 
 /* ======================================
@@ -904,12 +907,10 @@ footer{
    ====================================== */
 
 @media(max-width:900px){
-
     .product-container{
         grid-template-columns:1fr;
         padding:25px;
     }
-
     .description-section,
     .seller-section,
     .ai-insights-section,
@@ -917,36 +918,29 @@ footer{
     .review-form-section{
         padding:25px;
     }
-
     .navbar{
         flex-direction:column;
         gap:15px;
         padding:20px;
     }
-
     .nav-links{
         flex-wrap:wrap;
         justify-content:center;
         gap:18px;
     }
-
     .action-buttons{
         flex-direction:column;
     }
-
     .main-image{
         height:350px;
     }
-
     .thumbnail-container{
         justify-content:center;
     }
-
     .thumbnail-container img{
         width:80px;
         height:80px;
     }
-
     .chat-popup{
         width:95%;
         right:2.5%;
@@ -954,7 +948,6 @@ footer{
         height:78vh;
         transform-origin:bottom center;
     }
-
 }
 /* ======================================
    TOAST NOTIFICATIONS

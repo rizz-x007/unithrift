@@ -74,7 +74,7 @@
 
                 <button id="chatWithSellerBtn"
                         class="chat-seller-trigger">
-                    💬 Chat with Seller
+                    <i class="fa-solid fa-comments"></i> Chat with Seller
                 </button>
 
                 <button id="contactSellerBtn">
@@ -244,7 +244,7 @@
                     <span id="chatVerifiedBadge"
                           class="verified-badge"
                           style="display:none;">
-                        ✔ Verified
+                        <i class="fa-solid fa-circle-check"></i> Verified
                     </span>
                 </div>
 
@@ -336,8 +336,9 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+  <!-- Unified API Authorization wrapper loaded before product.js -->
+    <script src="/js/auth-fetch.js"></script>
     <script src="/js/product.js"></script>
-
 </body>
-
 </html>

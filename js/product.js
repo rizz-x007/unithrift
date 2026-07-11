@@ -118,108 +118,6 @@ function showConfirm(message, title = "Are you sure?") {
         document.addEventListener("keydown", onKeydown);
     });
 }
-// ======================================
-// AUTH HELPERS
-// ======================================
-
-// Refresh tokens are single-use — if several authFetch calls hit a 401 at
-// the same moment (common on pages that fire multiple requests on load),
-// each one must NOT independently redeem the same stored refresh token,
-// since the second call to reach Supabase would get "Already Used". This
-// in-flight promise makes every concurrent caller share the same request.
-let _refreshInFlight = null;
-
-async function tryRefreshToken() {
-    if (_refreshInFlight) return _refreshInFlight;
-
-    _refreshInFlight = (async () => {
-        const refreshToken = localStorage.getItem("unithrift_refresh_token");
-
-        if (!refreshToken) {
-            return null;
-        }
-
-        try {
-            const response = await fetch("/api/auth/refresh", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    refresh_token: refreshToken
-                })
-            });
-
-            const data = await response.json();
-
-            if (!response.ok || !data.success) {
-                return null;
-            }
-
-            localStorage.setItem(
-                "unithrift_session_token",
-                data.access_token
-            );
-
-            localStorage.setItem(
-                "unithrift_refresh_token",
-                data.refresh_token
-            );
-
-            return data.access_token;
-
-        } catch (err) {
-            console.error("Token refresh failed:", err);
-            return null;
-        }
-    })();
-
-    try {
-        return await _refreshInFlight;
-    } finally {
-        _refreshInFlight = null;
-    }
-}
-
-async function authFetch(url, options = {}) {
-
-    const token = localStorage.getItem("unithrift_session_token");
-    const refreshToken = localStorage.getItem("unithrift_refresh_token");
-
-    const buildHeaders = (accessToken) => {
-        const headers = new Headers(options.headers || {});
-
-        if (accessToken) {
-            headers.set("Authorization", `Bearer ${accessToken}`);
-        }
-
-        if (refreshToken) {
-            headers.set("X-Refresh-Token", refreshToken);
-        }
-
-        return headers;
-    };
-
-    let response = await fetch(url, {
-        ...options,
-        headers: buildHeaders(token)
-    });
-
-    if (response.status !== 401) {
-        return response;
-    }
-
-    const newToken = await tryRefreshToken();
-
-    if (!newToken) {
-        return response;
-    }
-
-    return fetch(url, {
-        ...options,
-        headers: buildHeaders(newToken)
-    });
-}
 
 if (chatWithSellerBtn) chatWithSellerBtn.style.display = 'none';
 if (contactSellerBtn) contactSellerBtn.style.display = 'none';
@@ -256,9 +154,8 @@ function renderSellerLayout(token) {
       markSoldBtn.textContent = "Marking...";
       markSoldBtn.disabled = true;
       try {
-        const res = await fetch(`/api/products/${productId}/sold`, {
-          method: 'PATCH',
-          headers: { 'Authorization': `Bearer ${token}` }
+        const res = await authFetch(`/api/products/${productId}/sold`, {
+          method: 'PATCH'
         });
         const data = await res.json();
         if (!data.success) throw new Error(data.message);
@@ -286,9 +183,8 @@ function renderSellerLayout(token) {
       deleteBtn.textContent = "Deleting...";
       deleteBtn.disabled = true;
       try {
-        const res = await fetch(`/api/products/${productId}`, {
-          method: 'DELETE',
-          headers: { 'Authorization': `Bearer ${token}` }
+        const res = await authFetch(`/api/products/${productId}`, {
+          method: 'DELETE'
         });
         const data = await res.json();
         if (!data.success) throw new Error(data.message);
@@ -367,29 +263,25 @@ async function loadProduct() {
 
     const token = localStorage.getItem("unithrift_session_token");
 
-if (token) {
-  try {
-    const r = await authFetch('/api/profile');
-    const d = await r.json();
+    if (token) {
+      try {
+        const r = await authFetch('/api/profile');
+        const d = await r.json();
 
-    if (d.success) {
-      currentUserId = d.profile?.id;
-      currentUserName =
-        d.profile?.full_name ||
-        d.profile?.username ||
-        "User";
+        if (d.success) {
+          currentUserId = d.profile?.id;
+          currentUserName = d.profile?.full_name || d.profile?.username || "User";
+        }
+      } catch (err) {
+        console.error("Profile initialization context failure:", err);
+      }
     }
 
-  } catch (err) {
-    console.error("Profile initialization context failure:", err);
-  }
-}
-
-if (currentUserId && String(currentUserId) === String(targetedSellerId)) {
-  renderSellerLayout(token);
-} else {
-  await renderBuyerLayout(token);
-}
+    if (currentUserId && String(currentUserId) === String(targetedSellerId)) {
+      renderSellerLayout(token);
+    } else {
+      await renderBuyerLayout(token);
+    }
 
   } catch (err) {
     console.error(err);
@@ -564,12 +456,9 @@ if (reviewForm) {
     }
 
     try {
-      const response = await fetch(`/api/products/${productId}/reviews`, {
+      const response = await authFetch(`/api/products/${productId}/reviews`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ rating, review_text })
       });
 
@@ -737,8 +626,6 @@ function stopPolling() {
 async function syncChatRoomHistory() {
   const sendChatBtn = document.getElementById("sendChatBtn");
 
-  // Reset input to enabled at the start of every attempt; the MULTIPLE_BUYERS
-  // branch below re-disables it since there's no single room to send into.
   if (chatInput) chatInput.disabled = false;
   if (sendChatBtn) sendChatBtn.disabled = false;
 
@@ -762,7 +649,6 @@ async function syncChatRoomHistory() {
     }
 
     activeRoomId = roomResult.room_id;
-
     loadedMessageIds.clear();
 
     if (chatMessages) {
@@ -777,9 +663,6 @@ async function syncChatRoomHistory() {
     stopPolling();
     activeRoomId = null;
 
-    // The seller has more than one interested buyer for this listing — there's
-    // no single room to open here, so point them to the full inbox instead of
-    // showing a plain error.
     if (err.code === "MULTIPLE_BUYERS") {
       if (chatInput) chatInput.disabled = true;
       if (sendChatBtn) sendChatBtn.disabled = true;
@@ -821,10 +704,7 @@ if (chatWithSellerBtn) {
     }
 
     const sellerData = currentSeller?.seller || currentSeller;
-    const sellerName =
-      sellerData?.full_name ||
-      sellerData?.username ||
-      "Seller";
+    const sellerName = sellerData?.full_name || sellerData?.username || "Seller";
 
     const isSeller =
       currentUserId &&
@@ -832,9 +712,7 @@ if (chatWithSellerBtn) {
       String(currentProduct.seller_id || currentProduct.user_id);
 
     if (chatSellerName) {
-      chatSellerName.textContent = isSeller
-        ? "Buyer Chat"
-        : sellerName;
+      chatSellerName.textContent = isSeller ? "Buyer Chat" : sellerName;
     }
 
     populateChatHeader();
@@ -894,7 +772,7 @@ if (chatForm) {
       }
 
     } catch (err) {
-      console.error("Transmission execution system pipeline error:", err);
+      console.error("Failed to execute chat send system pipeline:", err);
     }
   });
 }
