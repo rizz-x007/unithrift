@@ -437,42 +437,6 @@ Security is one of the core pillars of UniThrift.
 * Secure Buyer-Seller Communication
 
 ---
-
-# Project Structure
-
-```
-UniThrift/
-│
-├── client/
-│   ├── html/
-│   ├── css/
-│   ├── js/
-│   ├── images/
-│   └── assets/
-│
-├── server/
-│   ├── config/
-│   ├── controllers/
-│   ├── middleware/
-│   ├── models/
-│   ├── routes/
-│   ├── uploads/
-│   └── server.js
-│
-├── screenshots/
-│   ├── login.png
-│   ├── signup.png
-│   ├── marketplace.png
-│   ├── product.png
-│   ├── ai-verification.png
-│   ├── profile.png
-│   └── cart.png
-│
-├── package.json
-├── .env
-└── README.md
-```
-
 ---
 
 # Installation
