@@ -254,11 +254,9 @@ npm run dev
 #  Future Scope
 
 -  Integrated Payments
--  Location-based Listings
+<img width="1600" height="732" alt="IMG-20260711-WA0022" src="https://github.com/user-attachments/assets/ba702491-8fba-46fa-9647-3fcefffd413f" />
 -  Delivery Tracking
 -  Android & iOS App
--  Product Ratings
--  In-App Chat
 -  College-wise Communities
 -  Real-time Notifications
 
