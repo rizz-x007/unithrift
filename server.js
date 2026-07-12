@@ -13,6 +13,7 @@ const { generateOTP, hashOTP, verifyOTP, createExpiry, isExpired } = require('./
 const { sendVerificationOTP } = require('./services/emailservice');
 
 const app    = express();
+app.set('trust proxy', 1);
 const PORT   = process.env.PORT || 3000;
 
 // =========================================================================
@@ -380,9 +381,10 @@ app.get('/updates', (req, res) => sendWithSupabaseConfig(res, 'updates.html'));
 // =========================================================================
 app.post('/api/auth/google', async (req, res) => {
     try {
+        const origin = `${req.protocol}://${req.get('host')}`;
         const { data, error } = await supabaseAuth.auth.signInWithOAuth({
             provider: 'google',
-            options: { redirectTo: `${APP_URL}/marketplace` }
+            options: { redirectTo: `${origin}/marketplace` }
         });
         if (error) throw error;
         return res.json({ success: true, url: data.url });
