@@ -1,4 +1,29 @@
 // ======================================
+// OAUTH CALLBACK HANDLER
+// server.js's /api/auth/google sets redirectTo to this page (/marketplace),
+// so Supabase lands the browser back here with the session in the URL hash
+// (#access_token=...&refresh_token=...) after Google login completes.
+// login.js has an identical-looking handler, but it never runs for this flow
+// since the browser never visits /login — without this block here, the
+// tokens just sit unused in the hash and the user shows up logged out.
+// ======================================
+(function handleOAuthCallback() {
+    if (!window.location.hash || !window.location.hash.includes("access_token")) return;
+
+    const hashParams   = new URLSearchParams(window.location.hash.slice(1));
+    const accessToken  = hashParams.get("access_token");
+    const refreshToken = hashParams.get("refresh_token");
+    if (!accessToken) return;
+
+    localStorage.setItem("unithrift_session_token", accessToken);
+    if (refreshToken) localStorage.setItem("unithrift_refresh_token", refreshToken);
+
+    // Strip the tokens out of the URL; the rest of marketplace.js's init
+    // reads the token from localStorage as usual.
+    history.replaceState(null, "", window.location.pathname);
+})();
+
+// ======================================
 // ELEMENTS
 // ======================================
 const productsContainer = document.getElementById("productsContainer");
