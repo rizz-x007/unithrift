@@ -332,7 +332,7 @@ Our goal is to make buying and selling feel as smooth as using a modern e-commer
 | ----------------------- | -------------------------------- |
 | Frontend                | HTML5, CSS3, JavaScript          |
 | Backend                 | Node.js, Express.js              |
-| Database                | MongoDB                          |
+| Database                | PostGreSQL                       |
 | Authentication          | Supabase                         |
 | Artificial Intelligence | Google Gemini API                |
 | UI Design               | Glassmorphism, Responsive Design |
